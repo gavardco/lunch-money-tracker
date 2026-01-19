@@ -66,12 +66,13 @@ const DataTable = ({ data, onAdd, onUpdate, onDelete }: DataTableProps) => {
                 <TableHead className="font-semibold whitespace-nowrap">Enf. Cantine</TableHead>
                 <TableHead className="font-semibold whitespace-nowrap text-conventionnel">Coût Conv.</TableHead>
                 <TableHead className="font-semibold whitespace-nowrap text-bio">Coût Bio</TableHead>
-                <TableHead className="font-semibold whitespace-nowrap text-sigo">Coût SIGO</TableHead>
+                <TableHead className="font-semibold whitespace-nowrap text-siqo">Coût SIQO</TableHead>
+                <TableHead className="font-semibold whitespace-nowrap bg-primary/10 text-primary">Coût Matière Total</TableHead>
                 <TableHead className="font-semibold whitespace-nowrap">Prix Moyen</TableHead>
                 <TableHead className="font-semibold whitespace-nowrap">Coût Eau/Enf</TableHead>
                 <TableHead className="font-semibold whitespace-nowrap">Pain Bio/Enf</TableHead>
                 <TableHead className="font-semibold whitespace-nowrap">Pain Conv./Enf</TableHead>
-                <TableHead className="font-semibold whitespace-nowrap">Coût Mat./Enf</TableHead>
+                <TableHead className="font-semibold whitespace-nowrap">Coût Matière/Enf</TableHead>
                 <TableHead className="font-semibold whitespace-nowrap">Heures Agent</TableHead>
                 <TableHead className="font-semibold whitespace-nowrap">Frais Perso</TableHead>
                 <TableHead className="font-semibold whitespace-nowrap">Coût Pers./Enf</TableHead>
@@ -114,7 +115,7 @@ const DataTable = ({ data, onAdd, onUpdate, onDelete }: DataTableProps) => {
               ) : (
                 data.map((row) => {
                   const totalEnfants = (row.nbEnfantsCantine || 0) + (row.nbEnfantsALSH || 0);
-                  if (totalEnfants === 0 && !row.coutBio && !row.coutConventionnel && !row.coutSigo) return null;
+                  if (totalEnfants === 0 && !row.coutBio && !row.coutConventionnel && !row.coutSiqo) return null;
                   
                   return (
                     <TableRow key={row.date} className="hover:bg-muted/30 transition-colors group">
@@ -127,12 +128,13 @@ const DataTable = ({ data, onAdd, onUpdate, onDelete }: DataTableProps) => {
                       <TableCell>{formatNumber(row.nbEnfantsCantine)}</TableCell>
                       <TableCell className="text-conventionnel font-medium">{formatCurrency(row.coutConventionnel)}</TableCell>
                       <TableCell className="text-bio font-medium">{formatCurrency(row.coutBio)}</TableCell>
-                      <TableCell className="text-sigo font-medium">{formatCurrency(row.coutSigo)}</TableCell>
+                      <TableCell className="text-siqo font-medium">{formatCurrency(row.coutSiqo)}</TableCell>
+                      <TableCell className="bg-primary/10 font-bold text-primary">{formatCurrency(row.coutMatiereTotal)}</TableCell>
                       <TableCell className="font-semibold">{formatCurrency(row.prixRevientMoyen)}</TableCell>
                       <TableCell>{formatCurrency(row.coutEauParEnfant)}</TableCell>
                       <TableCell>{formatCurrency(row.coutPainBioParEnfant)}</TableCell>
                       <TableCell>{formatCurrency(row.coutPainConvParEnfant)}</TableCell>
-                      <TableCell>{formatCurrency(row.coutMaterielParEnfant)}</TableCell>
+                      <TableCell>{formatCurrency(row.coutMatiereParEnfant)}</TableCell>
                       <TableCell>{formatNumber(row.agentHeuresTravail)}</TableCell>
                       <TableCell>{formatCurrency(row.agentFraisPerso)}</TableCell>
                       <TableCell>{formatCurrency(row.coutPersonnelParEnfant)}</TableCell>

@@ -63,9 +63,9 @@ export default {
           DEFAULT: "hsl(var(--conventionnel))",
           foreground: "hsl(var(--conventionnel-foreground))",
         },
-        sigo: {
-          DEFAULT: "hsl(var(--sigo))",
-          foreground: "hsl(var(--sigo-foreground))",
+        siqo: {
+          DEFAULT: "hsl(var(--siqo))",
+          foreground: "hsl(var(--siqo-foreground))",
         },
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",

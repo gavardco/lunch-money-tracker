@@ -27,12 +27,13 @@ const emptyData: DailyData = {
   nbEnfantsCantine: null,
   coutConventionnel: null,
   coutBio: null,
-  coutSigo: null,
+  coutSiqo: null,
+  coutMatiereTotal: null,
   prixRevientMoyen: null,
   coutEauParEnfant: null,
   coutPainBioParEnfant: null,
   coutPainConvParEnfant: null,
-  coutMaterielParEnfant: null,
+  coutMatiereParEnfant: null,
   agentHeuresTravail: null,
   agentFraisPerso: null,
   coutPersonnelParEnfant: null,
@@ -101,11 +102,12 @@ const DataForm = ({ data, onSave, mode, trigger }: DataFormProps) => {
     
     // Calculer automatiquement certains champs
     const totalEnfants = (formData.nbEnfantsCantine || 0) + (formData.nbEnfantsALSH || 0);
-    const totalCout = (formData.coutBio || 0) + (formData.coutConventionnel || 0) + (formData.coutSigo || 0);
+    const coutMatiereTotal = (formData.coutBio || 0) + (formData.coutConventionnel || 0) + (formData.coutSiqo || 0);
     
     const updatedData = {
       ...formData,
-      prixRevientMoyen: totalEnfants > 0 ? parseFloat((totalCout / totalEnfants).toFixed(2)) : null,
+      coutMatiereTotal: coutMatiereTotal > 0 ? parseFloat(coutMatiereTotal.toFixed(2)) : null,
+      prixRevientMoyen: totalEnfants > 0 ? parseFloat((coutMatiereTotal / totalEnfants).toFixed(2)) : null,
       dechetPrimaireParEnfant: formData.dechetPrimaireNbEnfants && formData.dechetPrimairePoids 
         ? parseFloat((formData.dechetPrimairePoids / formData.dechetPrimaireNbEnfants).toFixed(3)) 
         : null,
@@ -209,11 +211,19 @@ const DataForm = ({ data, onSave, mode, trigger }: DataFormProps) => {
                 <div className="grid grid-cols-2 gap-4">
                   <InputField label="Coût Bio" field="coutBio" unit="€" />
                   <InputField label="Coût Conventionnel" field="coutConventionnel" unit="€" />
-                  <InputField label="Coût SIGO" field="coutSigo" unit="€" />
+                  <InputField label="Coût SIQO" field="coutSiqo" unit="€" />
+                  <div className="space-y-1.5 bg-primary/10 p-3 rounded-lg col-span-2">
+                    <Label className="text-sm font-medium text-primary">
+                      Coût matière total <span className="text-muted-foreground">(calculé automatiquement: Bio + Conv. + SIQO)</span>
+                    </Label>
+                    <div className="text-xl font-bold text-primary">
+                      {((formData.coutBio || 0) + (formData.coutConventionnel || 0) + (formData.coutSiqo || 0)).toFixed(2)} €
+                    </div>
+                  </div>
                   <InputField label="Coût eau/enfant" field="coutEauParEnfant" unit="€" />
                   <InputField label="Coût pain bio/enfant" field="coutPainBioParEnfant" unit="€" />
                   <InputField label="Coût pain conv./enfant" field="coutPainConvParEnfant" unit="€" />
-                  <InputField label="Coût matériel/enfant" field="coutMaterielParEnfant" unit="€" />
+                  <InputField label="Coût matière/enfant" field="coutMatiereParEnfant" unit="€" />
                   <InputField label="Heures travail agent" field="agentHeuresTravail" unit="h" />
                   <InputField label="Frais personnel agent" field="agentFraisPerso" unit="€" />
                   <InputField label="Coût personnel/enfant" field="coutPersonnelParEnfant" unit="€" />

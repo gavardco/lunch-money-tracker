@@ -17,15 +17,15 @@ const CostBreakdownChart = ({ data }: CostBreakdownChartProps) => {
     (acc, d) => ({
       bio: acc.bio + (d.coutBio || 0),
       conventionnel: acc.conventionnel + (d.coutConventionnel || 0),
-      sigo: acc.sigo + (d.coutSigo || 0),
+      siqo: acc.siqo + (d.coutSiqo || 0),
     }),
-    { bio: 0, conventionnel: 0, sigo: 0 }
+    { bio: 0, conventionnel: 0, siqo: 0 }
   );
 
   const chartData = [
     { name: "Bio", value: totals.bio, color: "hsl(142, 70%, 45%)" },
     { name: "Conventionnel", value: totals.conventionnel, color: "hsl(210, 60%, 50%)" },
-    { name: "SIGO", value: totals.sigo, color: "hsl(280, 60%, 50%)" },
+    { name: "SIQO", value: totals.siqo, color: "hsl(280, 60%, 50%)" },
   ].filter((d) => d.value > 0);
 
   const total = chartData.reduce((sum, item) => sum + item.value, 0);

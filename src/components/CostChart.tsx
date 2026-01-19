@@ -19,7 +19,7 @@ const CostChart = ({ monthlyData }: CostChartProps) => {
     mois: d.month,
     Bio: d.totalCoutBio,
     Conventionnel: d.totalCoutConventionnel,
-    SIGO: d.totalCoutSigo,
+    SIQO: d.totalCoutSiqo,
   }));
 
   return (
@@ -39,7 +39,7 @@ const CostChart = ({ monthlyData }: CostChartProps) => {
                 <stop offset="5%" stopColor="hsl(210, 60%, 50%)" stopOpacity={0.3} />
                 <stop offset="95%" stopColor="hsl(210, 60%, 50%)" stopOpacity={0} />
               </linearGradient>
-              <linearGradient id="colorSigo" x1="0" y1="0" x2="0" y2="1">
+              <linearGradient id="colorSiqo" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="5%" stopColor="hsl(280, 60%, 50%)" stopOpacity={0.3} />
                 <stop offset="95%" stopColor="hsl(280, 60%, 50%)" stopOpacity={0} />
               </linearGradient>
@@ -81,11 +81,11 @@ const CostChart = ({ monthlyData }: CostChartProps) => {
             />
             <Area
               type="monotone"
-              dataKey="SIGO"
+              dataKey="SIQO"
               stroke="hsl(280, 60%, 50%)"
               strokeWidth={2}
               fillOpacity={1}
-              fill="url(#colorSigo)"
+              fill="url(#colorSiqo)"
             />
           </AreaChart>
         </ResponsiveContainer>
