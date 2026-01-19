@@ -19,23 +19,28 @@ const AgentHoursChart = ({ monthlyData }: AgentHoursChartProps) => {
     mois: d.month,
     "Heures Cantine": d.heuresAgentCantine,
     "Heures ALSH": d.heuresAgentALSH,
+    "Heures Mercredi": d.heuresAgentMercredi,
   }));
 
   // Calculer les totaux annuels
   const totalHeuresCantine = monthlyData.reduce((sum, d) => sum + d.heuresAgentCantine, 0);
   const totalHeuresALSH = monthlyData.reduce((sum, d) => sum + d.heuresAgentALSH, 0);
+  const totalHeuresMercredi = monthlyData.reduce((sum, d) => sum + d.heuresAgentMercredi, 0);
 
   return (
     <div className="stat-card animate-slide-up">
       <h3 className="text-lg font-semibold font-display mb-2">
         Heures agent annuelles
       </h3>
-      <div className="flex gap-4 mb-4 text-sm">
+      <div className="flex gap-4 mb-4 text-sm flex-wrap">
         <span className="text-muted-foreground">
           Cantine: <strong className="text-primary">{totalHeuresCantine.toFixed(0)}h</strong>
         </span>
         <span className="text-muted-foreground">
           ALSH: <strong className="text-warning">{totalHeuresALSH.toFixed(0)}h</strong>
+        </span>
+        <span className="text-muted-foreground">
+          Mercredi: <strong className="text-green-600">{totalHeuresMercredi.toFixed(0)}h</strong>
         </span>
       </div>
       <div className="h-[280px]">
@@ -68,6 +73,11 @@ const AgentHoursChart = ({ monthlyData }: AgentHoursChartProps) => {
             <Bar
               dataKey="Heures ALSH"
               fill="hsl(38, 92%, 50%)"
+              radius={[4, 4, 0, 0]}
+            />
+            <Bar
+              dataKey="Heures Mercredi"
+              fill="hsl(142, 71%, 45%)"
               radius={[4, 4, 0, 0]}
             />
           </BarChart>
