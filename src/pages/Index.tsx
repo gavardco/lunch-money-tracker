@@ -7,11 +7,13 @@ import CostBreakdownChart from "@/components/CostBreakdownChart";
 import AttendanceChart from "@/components/AttendanceChart";
 import WasteChart from "@/components/WasteChart";
 import DataTable from "@/components/DataTable";
-import { sampleData } from "@/data/sampleData";
+import { useCanteenData } from "@/hooks/useCanteenData";
 
 const Index = () => {
+  const { data, addEntry, updateEntry, deleteEntry } = useCanteenData();
+
   const stats = useMemo(() => {
-    const validData = sampleData.filter(
+    const validData = data.filter(
       (d) => d.nbEnfantsCantine !== null || d.nbEnfantsALSH !== null
     );
 
@@ -52,7 +54,7 @@ const Index = () => {
       avgDechetsParEnfant,
       nbJours: validData.length,
     };
-  }, []);
+  }, [data]);
 
   return (
     <div className="min-h-screen bg-background">
@@ -94,28 +96,33 @@ const Index = () => {
         {/* Charts Row 1 */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
           <div className="lg:col-span-2">
-            <CostChart data={sampleData} />
+            <CostChart data={data} />
           </div>
           <div>
-            <CostBreakdownChart data={sampleData} />
+            <CostBreakdownChart data={data} />
           </div>
         </div>
 
         {/* Charts Row 2 */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-          <AttendanceChart data={sampleData} />
-          <WasteChart data={sampleData} />
+          <AttendanceChart data={data} />
+          <WasteChart data={data} />
         </div>
 
         {/* Data Table */}
-        <DataTable data={sampleData} />
+        <DataTable 
+          data={data} 
+          onAdd={addEntry}
+          onUpdate={updateEntry}
+          onDelete={deleteEntry}
+        />
       </main>
 
       {/* Footer */}
       <footer className="border-t border-border bg-card mt-8">
         <div className="container mx-auto px-4 py-6">
           <p className="text-center text-sm text-muted-foreground">
-            © 2026 Suivi Restauration Scolaire • Données de janvier 2026
+            © 2026 Suivi Restauration Scolaire • Les données sont sauvegardées localement
           </p>
         </div>
       </footer>
