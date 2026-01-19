@@ -8,6 +8,7 @@ export interface MonthlyData {
   totalCoutSiqo: number;
   totalEnfantsCantine: number;
   totalEnfantsALSH: number;
+  totalRepasMercredi: number;
   totalPrimaires: number;
   totalMaternelles: number;
   totalDechetsPrimaires: number;
@@ -32,6 +33,7 @@ export const aggregateByMonth = (data: DailyData[], selectedMonth: string): Mont
     totalCoutSiqo: number;
     totalEnfantsCantine: number;
     totalEnfantsALSH: number;
+    totalRepasMercredi: number;
     totalPrimaires: number;
     totalMaternelles: number;
     totalDechetsPrimaires: number;
@@ -52,6 +54,7 @@ export const aggregateByMonth = (data: DailyData[], selectedMonth: string): Mont
       totalCoutSiqo: 0,
       totalEnfantsCantine: 0,
       totalEnfantsALSH: 0,
+      totalRepasMercredi: 0,
       totalPrimaires: 0,
       totalMaternelles: 0,
       totalDechetsPrimaires: 0,
@@ -83,6 +86,7 @@ export const aggregateByMonth = (data: DailyData[], selectedMonth: string): Mont
     monthlyTotals[schoolYearIndex].totalCoutSiqo += d.coutSiqo || 0;
     monthlyTotals[schoolYearIndex].totalEnfantsCantine += d.nbEnfantsCantine || 0;
     monthlyTotals[schoolYearIndex].totalEnfantsALSH += d.nbEnfantsALSH || 0;
+    monthlyTotals[schoolYearIndex].totalRepasMercredi += d.mercredi || 0;
     monthlyTotals[schoolYearIndex].totalPrimaires += d.primairesReel || 0;
     monthlyTotals[schoolYearIndex].totalMaternelles += d.maternellesReel || 0;
     monthlyTotals[schoolYearIndex].totalDechetsPrimaires += d.dechetPrimairePoids || 0;

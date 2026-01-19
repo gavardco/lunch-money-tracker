@@ -19,23 +19,28 @@ const MealsChart = ({ monthlyData }: MealsChartProps) => {
     mois: d.month,
     "Repas Cantine": d.totalEnfantsCantine,
     "Repas ALSH": d.totalEnfantsALSH,
+    "Repas Mercredi": d.totalRepasMercredi,
   }));
 
   // Calculer les totaux annuels
   const totalCantine = monthlyData.reduce((sum, d) => sum + d.totalEnfantsCantine, 0);
   const totalALSH = monthlyData.reduce((sum, d) => sum + d.totalEnfantsALSH, 0);
+  const totalMercredi = monthlyData.reduce((sum, d) => sum + d.totalRepasMercredi, 0);
 
   return (
     <div className="stat-card animate-slide-up">
       <h3 className="text-lg font-semibold font-display mb-2">
         Nombre de repas annuels
       </h3>
-      <div className="flex gap-4 mb-4 text-sm">
+      <div className="flex gap-4 mb-4 text-sm flex-wrap">
         <span className="text-muted-foreground">
           Cantine: <strong className="text-primary">{totalCantine.toLocaleString('fr-FR')}</strong>
         </span>
         <span className="text-muted-foreground">
           ALSH: <strong className="text-warning">{totalALSH.toLocaleString('fr-FR')}</strong>
+        </span>
+        <span className="text-muted-foreground">
+          Mercredi: <strong className="text-green-600">{totalMercredi.toLocaleString('fr-FR')}</strong>
         </span>
       </div>
       <div className="h-[280px]">
@@ -65,6 +70,11 @@ const MealsChart = ({ monthlyData }: MealsChartProps) => {
             <Bar
               dataKey="Repas ALSH"
               fill="hsl(38, 92%, 50%)"
+              radius={[4, 4, 0, 0]}
+            />
+            <Bar
+              dataKey="Repas Mercredi"
+              fill="hsl(142, 71%, 45%)"
               radius={[4, 4, 0, 0]}
             />
           </BarChart>
