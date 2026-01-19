@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { DailyData } from "@/types/cantine";
+import { DailyData, parseFrenchDate } from "@/types/cantine";
 import { sampleData } from "@/data/sampleData";
 
 const STORAGE_KEY = "cantine_data";
@@ -32,24 +32,31 @@ export const useCanteenData = () => {
 
   // Sauvegarder à chaque modification
   const saveData = useCallback((newData: DailyData[]) => {
-    setData(newData);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(newData));
+    // Trier par date
+    const sortedData = [...newData].sort((a, b) => {
+      const dateA = parseFrenchDate(a.date);
+      const dateB = parseFrenchDate(b.date);
+      if (!dateA || !dateB) return 0;
+      return dateA.getTime() - dateB.getTime();
+    });
+    setData(sortedData);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(sortedData));
   }, []);
 
   // Ajouter une nouvelle entrée
   const addEntry = useCallback((entry: DailyData) => {
-    const newData = [...data, entry].sort((a, b) => a.date - b.date);
+    const newData = [...data, entry];
     saveData(newData);
   }, [data, saveData]);
 
   // Mettre à jour une entrée existante
-  const updateEntry = useCallback((date: number, entry: DailyData) => {
-    const newData = data.map((d) => (d.date === date ? entry : d));
+  const updateEntry = useCallback((originalDate: string, entry: DailyData) => {
+    const newData = data.map((d) => (d.date === originalDate ? entry : d));
     saveData(newData);
   }, [data, saveData]);
 
   // Supprimer une entrée
-  const deleteEntry = useCallback((date: number) => {
+  const deleteEntry = useCallback((date: string) => {
     const newData = data.filter((d) => d.date !== date);
     saveData(newData);
   }, [data, saveData]);

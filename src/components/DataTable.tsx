@@ -27,8 +27,8 @@ import DataForm from "./DataForm";
 interface DataTableProps {
   data: DailyData[];
   onAdd: (data: DailyData) => void;
-  onUpdate: (date: number, data: DailyData) => void;
-  onDelete: (date: number) => void;
+  onUpdate: (date: string, data: DailyData) => void;
+  onDelete: (date: string) => void;
 }
 
 const DataTable = ({ data, onAdd, onUpdate, onDelete }: DataTableProps) => {
@@ -61,7 +61,7 @@ const DataTable = ({ data, onAdd, onUpdate, onDelete }: DataTableProps) => {
           <Table>
             <TableHeader>
               <TableRow className="bg-muted/50">
-                <TableHead className="font-semibold sticky left-0 bg-muted/50 z-10 w-16">Jour</TableHead>
+                <TableHead className="font-semibold sticky left-0 bg-muted/50 z-10 w-28">Date</TableHead>
                 <TableHead className="font-semibold whitespace-nowrap">Enf. ALSH</TableHead>
                 <TableHead className="font-semibold whitespace-nowrap">Enf. Cantine</TableHead>
                 <TableHead className="font-semibold whitespace-nowrap text-conventionnel">Coût Conv.</TableHead>
@@ -119,7 +119,7 @@ const DataTable = ({ data, onAdd, onUpdate, onDelete }: DataTableProps) => {
                   return (
                     <TableRow key={row.date} className="hover:bg-muted/30 transition-colors group">
                       <TableCell className="font-medium sticky left-0 bg-card group-hover:bg-muted/30 z-10">
-                        <Badge variant="outline" className="font-mono">
+                        <Badge variant="outline" className="font-mono text-xs">
                           {row.date}
                         </Badge>
                       </TableCell>
@@ -167,7 +167,7 @@ const DataTable = ({ data, onAdd, onUpdate, onDelete }: DataTableProps) => {
                               <AlertDialogHeader>
                                 <AlertDialogTitle>Supprimer cette entrée ?</AlertDialogTitle>
                                 <AlertDialogDescription>
-                                  Êtes-vous sûr de vouloir supprimer les données du jour {row.date} ?
+                                  Êtes-vous sûr de vouloir supprimer les données du {row.date} ?
                                   Cette action est irréversible.
                                 </AlertDialogDescription>
                               </AlertDialogHeader>

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { DailyData } from "@/types/cantine";
+import { DailyData, getTodayFrenchDate, isValidFrenchDate } from "@/types/cantine";
 import {
   Dialog,
   DialogContent,
@@ -12,7 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Plus, Pencil } from "lucide-react";
+import { Plus, Pencil, Calendar } from "lucide-react";
 
 interface DataFormProps {
   data?: DailyData;
@@ -22,7 +22,7 @@ interface DataFormProps {
 }
 
 const emptyData: DailyData = {
-  date: 1,
+  date: getTodayFrenchDate(),
   nbEnfantsALSH: null,
   nbEnfantsCantine: null,
   coutConventionnel: null,
@@ -55,21 +55,49 @@ const emptyData: DailyData = {
 const DataForm = ({ data, onSave, mode, trigger }: DataFormProps) => {
   const [open, setOpen] = useState(false);
   const [formData, setFormData] = useState<DailyData>(data || emptyData);
+  const [dateError, setDateError] = useState<string | null>(null);
 
   const handleOpen = (isOpen: boolean) => {
     setOpen(isOpen);
     if (isOpen) {
-      setFormData(data || emptyData);
+      setFormData(data || { ...emptyData, date: getTodayFrenchDate() });
+      setDateError(null);
+    }
+  };
+
+  const handleDateChange = (value: string) => {
+    // Permettre la saisie libre, validation à la soumission
+    setFormData((prev) => ({ ...prev, date: value }));
+    
+    // Validation en temps réel pour feedback utilisateur
+    if (value.length === 10) {
+      if (!isValidFrenchDate(value)) {
+        setDateError("Format invalide. Utilisez jj/mm/aaaa");
+      } else {
+        setDateError(null);
+      }
+    } else {
+      setDateError(null);
     }
   };
 
   const handleChange = (field: keyof DailyData, value: string) => {
+    if (field === "date") {
+      handleDateChange(value);
+      return;
+    }
     const numValue = value === "" ? null : parseFloat(value);
     setFormData((prev) => ({ ...prev, [field]: numValue }));
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Valider la date
+    if (!isValidFrenchDate(formData.date)) {
+      setDateError("Date invalide. Utilisez le format jj/mm/aaaa (ex: 15/01/2026)");
+      return;
+    }
     
     // Calculer automatiquement certains champs
     const totalEnfants = (formData.nbEnfantsCantine || 0) + (formData.nbEnfantsALSH || 0);
@@ -136,7 +164,7 @@ const DataForm = ({ data, onSave, mode, trigger }: DataFormProps) => {
       <DialogContent className="max-w-2xl max-h-[90vh]">
         <DialogHeader>
           <DialogTitle className="font-display text-xl">
-            {mode === "add" ? "Ajouter une journée" : `Modifier le jour ${formData.date}`}
+            {mode === "add" ? "Ajouter une journée" : `Modifier le ${formData.date}`}
           </DialogTitle>
         </DialogHeader>
         
@@ -152,7 +180,24 @@ const DataForm = ({ data, onSave, mode, trigger }: DataFormProps) => {
             <ScrollArea className="h-[400px] pr-4">
               <TabsContent value="general" className="mt-0 space-y-4">
                 <div className="grid grid-cols-2 gap-4">
-                  <InputField label="Jour du mois" field="date" step="1" />
+                  <div className="space-y-1.5">
+                    <Label htmlFor="date" className="text-sm font-medium flex items-center gap-2">
+                      <Calendar className="h-4 w-4" />
+                      Date <span className="text-muted-foreground">(jj/mm/aaaa)</span>
+                    </Label>
+                    <Input
+                      id="date"
+                      type="text"
+                      value={formData.date}
+                      onChange={(e) => handleDateChange(e.target.value)}
+                      className={`h-9 ${dateError ? 'border-destructive' : ''}`}
+                      placeholder="15/01/2026"
+                      maxLength={10}
+                    />
+                    {dateError && (
+                      <p className="text-xs text-destructive">{dateError}</p>
+                    )}
+                  </div>
                   <InputField label="Nb enfants cantine" field="nbEnfantsCantine" step="1" />
                   <InputField label="Nb enfants ALSH" field="nbEnfantsALSH" step="1" />
                   <InputField label="Repas adultes" field="repasAdultes" step="1" />

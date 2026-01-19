@@ -2,7 +2,7 @@ import { DailyData } from "@/types/cantine";
 
 export const sampleData: DailyData[] = [
   {
-    date: 1,
+    date: "06/01/2026",
     nbEnfantsALSH: null,
     nbEnfantsCantine: 296,
     coutConventionnel: 15.6,
@@ -32,7 +32,7 @@ export const sampleData: DailyData[] = [
     dechetMaternelleParEnfant: 0.007,
   },
   {
-    date: 2,
+    date: "07/01/2026",
     nbEnfantsALSH: null,
     nbEnfantsCantine: 293,
     coutConventionnel: 44.5,
@@ -62,7 +62,7 @@ export const sampleData: DailyData[] = [
     dechetMaternelleParEnfant: 0.009,
   },
   {
-    date: 3,
+    date: "08/01/2026",
     nbEnfantsALSH: 51,
     nbEnfantsCantine: null,
     coutConventionnel: 20.31,
@@ -92,7 +92,7 @@ export const sampleData: DailyData[] = [
     dechetMaternelleParEnfant: null,
   },
   {
-    date: 4,
+    date: "09/01/2026",
     nbEnfantsALSH: null,
     nbEnfantsCantine: 301,
     coutConventionnel: 45.83,
@@ -122,7 +122,7 @@ export const sampleData: DailyData[] = [
     dechetMaternelleParEnfant: 0.013,
   },
   {
-    date: 5,
+    date: "10/01/2026",
     nbEnfantsALSH: null,
     nbEnfantsCantine: 153,
     coutConventionnel: 6.25,
@@ -152,7 +152,7 @@ export const sampleData: DailyData[] = [
     dechetMaternelleParEnfant: 0.006,
   },
   {
-    date: 8,
+    date: "13/01/2026",
     nbEnfantsALSH: null,
     nbEnfantsCantine: 282,
     coutConventionnel: null,
@@ -182,7 +182,7 @@ export const sampleData: DailyData[] = [
     dechetMaternelleParEnfant: 0.004,
   },
   {
-    date: 9,
+    date: "14/01/2026",
     nbEnfantsALSH: null,
     nbEnfantsCantine: 280,
     coutConventionnel: 29.65,
@@ -212,7 +212,7 @@ export const sampleData: DailyData[] = [
     dechetMaternelleParEnfant: 0.014,
   },
   {
-    date: 10,
+    date: "15/01/2026",
     nbEnfantsALSH: 51,
     nbEnfantsCantine: null,
     coutConventionnel: 29.34,
@@ -242,7 +242,7 @@ export const sampleData: DailyData[] = [
     dechetMaternelleParEnfant: null,
   },
   {
-    date: 11,
+    date: "16/01/2026",
     nbEnfantsALSH: null,
     nbEnfantsCantine: 284,
     coutConventionnel: 55.3,
@@ -272,7 +272,7 @@ export const sampleData: DailyData[] = [
     dechetMaternelleParEnfant: 0.004,
   },
   {
-    date: 12,
+    date: "17/01/2026",
     nbEnfantsALSH: null,
     nbEnfantsCantine: 297,
     coutConventionnel: 19.71,
@@ -302,7 +302,7 @@ export const sampleData: DailyData[] = [
     dechetMaternelleParEnfant: 0.014,
   },
   {
-    date: 15,
+    date: "20/01/2026",
     nbEnfantsALSH: null,
     nbEnfantsCantine: 271,
     coutConventionnel: 42.49,
@@ -332,7 +332,7 @@ export const sampleData: DailyData[] = [
     dechetMaternelleParEnfant: 0.010,
   },
   {
-    date: 16,
+    date: "21/01/2026",
     nbEnfantsALSH: null,
     nbEnfantsCantine: 277,
     coutConventionnel: 27.43,
@@ -362,7 +362,7 @@ export const sampleData: DailyData[] = [
     dechetMaternelleParEnfant: 0.012,
   },
   {
-    date: 17,
+    date: "22/01/2026",
     nbEnfantsALSH: 58,
     nbEnfantsCantine: null,
     coutConventionnel: 15.28,
@@ -392,7 +392,7 @@ export const sampleData: DailyData[] = [
     dechetMaternelleParEnfant: null,
   },
   {
-    date: 18,
+    date: "23/01/2026",
     nbEnfantsALSH: null,
     nbEnfantsCantine: 315,
     coutConventionnel: 210.81,
@@ -422,7 +422,7 @@ export const sampleData: DailyData[] = [
     dechetMaternelleParEnfant: 0,
   },
   {
-    date: 19,
+    date: "24/01/2026",
     nbEnfantsALSH: null,
     nbEnfantsCantine: 292,
     coutConventionnel: 72.21,
