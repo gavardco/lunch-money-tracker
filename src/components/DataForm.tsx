@@ -271,15 +271,39 @@ const DataForm = ({ data, onSave, mode, trigger }: DataFormProps) => {
               
               <TabsContent value="dechets" className="mt-0 space-y-4">
                 <h4 className="font-medium text-sm text-muted-foreground mb-2">Primaires</h4>
-                <div className="grid grid-cols-2 gap-4 mb-6">
+                <div className="grid grid-cols-2 gap-4 mb-2">
                   <InputField label="Nb enfants primaires" field="dechetPrimaireNbEnfants" step="1" />
                   <InputField label="Poids total primaires" field="dechetPrimairePoids" unit="kg" step="0.001" />
                 </div>
+                <div className="space-y-1.5 bg-orange-500/10 p-3 rounded-lg mb-6">
+                  <Label className="text-sm font-medium text-orange-700 dark:text-orange-400">
+                    Déchet/enfant primaire <span className="text-muted-foreground">(calculé auto: Poids ÷ Nb enfants)</span>
+                  </Label>
+                  <div className="text-xl font-bold text-orange-700 dark:text-orange-400">
+                    {(() => {
+                      const nbEnfants = formData.dechetPrimaireNbEnfants || 0;
+                      const poids = formData.dechetPrimairePoids || 0;
+                      return nbEnfants > 0 && poids > 0 ? (poids / nbEnfants).toFixed(3) : '—';
+                    })()} kg
+                  </div>
+                </div>
                 
                 <h4 className="font-medium text-sm text-muted-foreground mb-2">Maternelles</h4>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-2 gap-4 mb-2">
                   <InputField label="Nb enfants maternelles" field="dechetMaternelleNbEnfants" step="1" />
                   <InputField label="Poids total maternelles" field="dechetMaternellePoids" unit="kg" step="0.001" />
+                </div>
+                <div className="space-y-1.5 bg-purple-500/10 p-3 rounded-lg">
+                  <Label className="text-sm font-medium text-purple-700 dark:text-purple-400">
+                    Déchet/enfant maternelle <span className="text-muted-foreground">(calculé auto: Poids ÷ Nb enfants)</span>
+                  </Label>
+                  <div className="text-xl font-bold text-purple-700 dark:text-purple-400">
+                    {(() => {
+                      const nbEnfants = formData.dechetMaternelleNbEnfants || 0;
+                      const poids = formData.dechetMaternellePoids || 0;
+                      return nbEnfants > 0 && poids > 0 ? (poids / nbEnfants).toFixed(3) : '—';
+                    })()} kg
+                  </div>
                 </div>
               </TabsContent>
             </ScrollArea>
