@@ -62,8 +62,8 @@ const DataTable = ({ data, onAdd, onUpdate, onDelete }: DataTableProps) => {
             <TableHeader>
               <TableRow className="bg-muted/50">
                 <TableHead className="font-semibold sticky left-0 bg-muted/50 z-10 w-28">Date</TableHead>
-                <TableHead className="font-semibold whitespace-nowrap">Enf. ALSH</TableHead>
-                <TableHead className="font-semibold whitespace-nowrap">Enf. Cantine</TableHead>
+                <TableHead className="font-semibold whitespace-nowrap">Repas Enf. ALSH</TableHead>
+                <TableHead className="font-semibold whitespace-nowrap">Repas Enf. Cantine</TableHead>
                 <TableHead className="font-semibold whitespace-nowrap text-conventionnel">Coût Conv.</TableHead>
                 <TableHead className="font-semibold whitespace-nowrap text-bio">Coût Bio</TableHead>
                 <TableHead className="font-semibold whitespace-nowrap text-siqo">Coût SIQO</TableHead>
