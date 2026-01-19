@@ -21,7 +21,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Trash2, Plus } from "lucide-react";
+import { Trash2, Plus, Download } from "lucide-react";
 import DataForm from "./DataForm";
 
 interface DataTableProps {
@@ -47,13 +47,106 @@ const DataTable = ({ data, onAdd, onUpdate, onDelete }: DataTableProps) => {
     return value.toFixed(decimals);
   };
 
+  const exportToCSV = () => {
+    const headers = [
+      "Date",
+      "Repas Enf. ALSH",
+      "Repas Enf. Cantine",
+      "Coût Conventionnel",
+      "Coût Bio",
+      "Coût SIQO",
+      "Coût Matière Total",
+      "Prix Revient Moyen",
+      "Coût Eau/Enfant",
+      "Pain Bio/Enfant",
+      "Pain Conv./Enfant",
+      "Coût Matière/Enfant",
+      "Heures Agent",
+      "Frais Personnel",
+      "Coût Personnel/Enfant",
+      "Primaires Réel",
+      "Primaires 7h",
+      "Maternelles Réel",
+      "Maternelles 7h",
+      "Repas Adultes",
+      "Mercredi",
+      "O Merveilles ALSH",
+      "Adulte O Merveilles",
+      "Déchet Primaire Nb",
+      "Déchet Primaire Poids",
+      "Déchet Primaire/Enfant",
+      "Déchet Maternelle Nb",
+      "Déchet Maternelle Poids",
+      "Déchet Maternelle/Enfant",
+    ];
+
+    const csvRows = [headers.join(";")];
+
+    data.forEach((row) => {
+      const values = [
+        row.date,
+        row.nbEnfantsALSH ?? "",
+        row.nbEnfantsCantine ?? "",
+        row.coutConventionnel ?? "",
+        row.coutBio ?? "",
+        row.coutSiqo ?? "",
+        row.coutMatiereTotal ?? "",
+        row.prixRevientMoyen ?? "",
+        row.coutEauParEnfant ?? "",
+        row.coutPainBioParEnfant ?? "",
+        row.coutPainConvParEnfant ?? "",
+        row.coutMatiereParEnfant ?? "",
+        row.agentHeuresTravail ?? "",
+        row.agentFraisPerso ?? "",
+        row.coutPersonnelParEnfant ?? "",
+        row.primairesReel ?? "",
+        row.primaires7h ?? "",
+        row.maternellesReel ?? "",
+        row.maternelles7h ?? "",
+        row.repasAdultes ?? "",
+        row.mercredi ?? "",
+        row.oMerveillesALSH ?? "",
+        row.adulteOMerveillesALSH ?? "",
+        row.dechetPrimaireNbEnfants ?? "",
+        row.dechetPrimairePoids ?? "",
+        row.dechetPrimaireParEnfant ?? "",
+        row.dechetMaternelleNbEnfants ?? "",
+        row.dechetMaternellePoids ?? "",
+        row.dechetMaternelleParEnfant ?? "",
+      ];
+      csvRows.push(values.join(";"));
+    });
+
+    const csvContent = csvRows.join("\n");
+    const blob = new Blob(["\uFEFF" + csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", `cantine_donnees_${new Date().toISOString().split("T")[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <div className="stat-card animate-slide-up overflow-hidden">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-lg font-semibold font-display">
           Données journalières
         </h3>
-        <DataForm mode="add" onSave={onAdd} />
+        <div className="flex items-center gap-2">
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={exportToCSV}
+            disabled={data.length === 0}
+          >
+            <Download className="h-4 w-4 mr-2" />
+            Exporter CSV
+          </Button>
+          <DataForm mode="add" onSave={onAdd} />
+        </div>
       </div>
       
       <ScrollArea className="h-[500px] w-full">
