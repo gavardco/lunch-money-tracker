@@ -10,24 +10,35 @@ import {
   Legend,
 } from "recharts";
 
-interface AttendanceChartProps {
+interface AgentHoursChartProps {
   monthlyData: MonthlyData[];
 }
 
-const AttendanceChart = ({ monthlyData }: AttendanceChartProps) => {
+const AgentHoursChart = ({ monthlyData }: AgentHoursChartProps) => {
   const chartData = monthlyData.map((d) => ({
     mois: d.month,
-    Primaires: d.totalPrimaires,
-    Maternelles: d.totalMaternelles,
-    ALSH: d.totalEnfantsALSH,
+    "Heures Cantine": d.heuresAgentCantine,
+    "Heures ALSH": d.heuresAgentALSH,
   }));
+
+  // Calculer les totaux annuels
+  const totalHeuresCantine = monthlyData.reduce((sum, d) => sum + d.heuresAgentCantine, 0);
+  const totalHeuresALSH = monthlyData.reduce((sum, d) => sum + d.heuresAgentALSH, 0);
 
   return (
     <div className="stat-card animate-slide-up">
-      <h3 className="text-lg font-semibold font-display mb-4">
-        Fréquentation mensuelle
+      <h3 className="text-lg font-semibold font-display mb-2">
+        Heures agent annuelles
       </h3>
-      <div className="h-[300px]">
+      <div className="flex gap-4 mb-4 text-sm">
+        <span className="text-muted-foreground">
+          Cantine: <strong className="text-primary">{totalHeuresCantine.toFixed(0)}h</strong>
+        </span>
+        <span className="text-muted-foreground">
+          ALSH: <strong className="text-warning">{totalHeuresALSH.toFixed(0)}h</strong>
+        </span>
+      </div>
+      <div className="h-[280px]">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={chartData}>
             <CartesianGrid strokeDasharray="3 3" stroke="hsl(210, 20%, 90%)" />
@@ -35,7 +46,10 @@ const AttendanceChart = ({ monthlyData }: AttendanceChartProps) => {
               dataKey="mois"
               tick={{ fill: "hsl(215, 15%, 45%)", fontSize: 12 }}
             />
-            <YAxis tick={{ fill: "hsl(215, 15%, 45%)", fontSize: 12 }} />
+            <YAxis
+              tick={{ fill: "hsl(215, 15%, 45%)", fontSize: 12 }}
+              tickFormatter={(value) => `${value}h`}
+            />
             <Tooltip
               contentStyle={{
                 backgroundColor: "hsl(0, 0%, 100%)",
@@ -43,21 +57,16 @@ const AttendanceChart = ({ monthlyData }: AttendanceChartProps) => {
                 borderRadius: "8px",
                 boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)",
               }}
-              formatter={(value: number) => [`${value} enfants`, ""]}
+              formatter={(value: number) => [`${value.toFixed(1)} heures`, ""]}
             />
             <Legend />
             <Bar
-              dataKey="Primaires"
+              dataKey="Heures Cantine"
               fill="hsl(210, 60%, 50%)"
               radius={[4, 4, 0, 0]}
             />
             <Bar
-              dataKey="Maternelles"
-              fill="hsl(142, 70%, 45%)"
-              radius={[4, 4, 0, 0]}
-            />
-            <Bar
-              dataKey="ALSH"
+              dataKey="Heures ALSH"
               fill="hsl(38, 92%, 50%)"
               radius={[4, 4, 0, 0]}
             />
@@ -68,4 +77,4 @@ const AttendanceChart = ({ monthlyData }: AttendanceChartProps) => {
   );
 };
 
-export default AttendanceChart;
+export default AgentHoursChart;

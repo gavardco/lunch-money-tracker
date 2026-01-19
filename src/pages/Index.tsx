@@ -6,11 +6,19 @@ import CostChart from "@/components/CostChart";
 import CostBreakdownChart from "@/components/CostBreakdownChart";
 import AttendanceChart from "@/components/AttendanceChart";
 import WasteChart from "@/components/WasteChart";
+import MealsChart from "@/components/MealsChart";
+import AgentHoursChart from "@/components/AgentHoursChart";
+import StaffCostsChart from "@/components/StaffCostsChart";
 import DataTable from "@/components/DataTable";
 import { useCanteenData } from "@/hooks/useCanteenData";
+import { aggregateByMonth } from "@/utils/dataAggregation";
 
 const Index = () => {
-  const { data, addEntry, updateEntry, deleteEntry } = useCanteenData();
+  const { data, selectedMonth, addEntry, updateEntry, deleteEntry } = useCanteenData();
+
+  const monthlyData = useMemo(() => {
+    return aggregateByMonth(data, selectedMonth);
+  }, [data, selectedMonth]);
 
   const stats = useMemo(() => {
     const validData = data.filter(
@@ -93,20 +101,31 @@ const Index = () => {
           />
         </div>
 
-        {/* Charts Row 1 */}
+        {/* Charts Row 1 - Coûts alimentaires */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
           <div className="lg:col-span-2">
-            <CostChart data={data} />
+            <CostChart monthlyData={monthlyData} />
           </div>
           <div>
             <CostBreakdownChart data={data} />
           </div>
         </div>
 
-        {/* Charts Row 2 */}
+        {/* Charts Row 2 - Fréquentation et Déchets */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-          <AttendanceChart data={data} />
-          <WasteChart data={data} />
+          <AttendanceChart monthlyData={monthlyData} />
+          <WasteChart monthlyData={monthlyData} />
+        </div>
+
+        {/* Charts Row 3 - Repas annuels */}
+        <div className="grid grid-cols-1 lg:grid-cols-1 gap-6 mb-6">
+          <MealsChart monthlyData={monthlyData} />
+        </div>
+
+        {/* Charts Row 4 - Heures agent et Frais personnel */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+          <AgentHoursChart monthlyData={monthlyData} />
+          <StaffCostsChart monthlyData={monthlyData} />
         </div>
 
         {/* Data Table */}
