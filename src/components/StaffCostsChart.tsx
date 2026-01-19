@@ -19,23 +19,28 @@ const StaffCostsChart = ({ monthlyData }: StaffCostsChartProps) => {
     mois: d.month,
     "Frais Cantine": d.fraisPersonnelCantine,
     "Frais ALSH": d.fraisPersonnelALSH,
+    "Frais Mercredi": d.fraisPersonnelMercredi,
   }));
 
   // Calculer les totaux annuels
   const totalFraisCantine = monthlyData.reduce((sum, d) => sum + d.fraisPersonnelCantine, 0);
   const totalFraisALSH = monthlyData.reduce((sum, d) => sum + d.fraisPersonnelALSH, 0);
+  const totalFraisMercredi = monthlyData.reduce((sum, d) => sum + d.fraisPersonnelMercredi, 0);
 
   return (
     <div className="stat-card animate-slide-up">
       <h3 className="text-lg font-semibold font-display mb-2">
         Frais personnel annuels
       </h3>
-      <div className="flex gap-4 mb-4 text-sm">
+      <div className="flex gap-4 mb-4 text-sm flex-wrap">
         <span className="text-muted-foreground">
           Cantine: <strong className="text-primary">{totalFraisCantine.toFixed(0)} €</strong>
         </span>
         <span className="text-muted-foreground">
           ALSH: <strong className="text-warning">{totalFraisALSH.toFixed(0)} €</strong>
+        </span>
+        <span className="text-muted-foreground">
+          Mercredi: <strong className="text-green-600">{totalFraisMercredi.toFixed(0)} €</strong>
         </span>
       </div>
       <div className="h-[280px]">
@@ -49,6 +54,10 @@ const StaffCostsChart = ({ monthlyData }: StaffCostsChartProps) => {
               <linearGradient id="colorALSH" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="5%" stopColor="hsl(38, 92%, 50%)" stopOpacity={0.3} />
                 <stop offset="95%" stopColor="hsl(38, 92%, 50%)" stopOpacity={0} />
+              </linearGradient>
+              <linearGradient id="colorMercredi" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="hsl(142, 71%, 45%)" stopOpacity={0.3} />
+                <stop offset="95%" stopColor="hsl(142, 71%, 45%)" stopOpacity={0} />
               </linearGradient>
             </defs>
             <CartesianGrid strokeDasharray="3 3" stroke="hsl(210, 20%, 90%)" />
@@ -85,6 +94,14 @@ const StaffCostsChart = ({ monthlyData }: StaffCostsChartProps) => {
               strokeWidth={2}
               fillOpacity={1}
               fill="url(#colorALSH)"
+            />
+            <Area
+              type="monotone"
+              dataKey="Frais Mercredi"
+              stroke="hsl(142, 71%, 45%)"
+              strokeWidth={2}
+              fillOpacity={1}
+              fill="url(#colorMercredi)"
             />
           </AreaChart>
         </ResponsiveContainer>
