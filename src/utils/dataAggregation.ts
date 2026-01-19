@@ -5,7 +5,7 @@ export interface MonthlyData {
   monthIndex: number;
   totalCoutBio: number;
   totalCoutConventionnel: number;
-  totalCoutSigo: number;
+  totalCoutSiqo: number;
   totalEnfantsCantine: number;
   totalEnfantsALSH: number;
   totalPrimaires: number;
@@ -29,7 +29,7 @@ export const aggregateByMonth = (data: DailyData[], selectedMonth: string): Mont
   const monthlyTotals: Record<number, {
     totalCoutBio: number;
     totalCoutConventionnel: number;
-    totalCoutSigo: number;
+    totalCoutSiqo: number;
     totalEnfantsCantine: number;
     totalEnfantsALSH: number;
     totalPrimaires: number;
@@ -49,7 +49,7 @@ export const aggregateByMonth = (data: DailyData[], selectedMonth: string): Mont
     monthlyTotals[i] = {
       totalCoutBio: 0,
       totalCoutConventionnel: 0,
-      totalCoutSigo: 0,
+      totalCoutSiqo: 0,
       totalEnfantsCantine: 0,
       totalEnfantsALSH: 0,
       totalPrimaires: 0,
@@ -80,7 +80,7 @@ export const aggregateByMonth = (data: DailyData[], selectedMonth: string): Mont
 
     monthlyTotals[schoolYearIndex].totalCoutBio += d.coutBio || 0;
     monthlyTotals[schoolYearIndex].totalCoutConventionnel += d.coutConventionnel || 0;
-    monthlyTotals[schoolYearIndex].totalCoutSigo += d.coutSigo || 0;
+    monthlyTotals[schoolYearIndex].totalCoutSiqo += d.coutSiqo || 0;
     monthlyTotals[schoolYearIndex].totalEnfantsCantine += d.nbEnfantsCantine || 0;
     monthlyTotals[schoolYearIndex].totalEnfantsALSH += d.nbEnfantsALSH || 0;
     monthlyTotals[schoolYearIndex].totalPrimaires += d.primairesReel || 0;

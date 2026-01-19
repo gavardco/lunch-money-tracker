@@ -35,11 +35,11 @@ const Index = () => {
       (sum, d) => sum + (d.coutConventionnel || 0),
       0
     );
-    const totalCoutSigo = validData.reduce(
-      (sum, d) => sum + (d.coutSigo || 0),
+    const totalCoutSiqo = validData.reduce(
+      (sum, d) => sum + (d.coutSiqo || 0),
       0
     );
-    const totalCout = totalCoutBio + totalCoutConv + totalCoutSigo;
+    const totalCout = totalCoutBio + totalCoutConv + totalCoutSiqo;
 
     const avgCoutParEnfant = totalEnfants > 0 ? totalCout / totalEnfants : 0;
 

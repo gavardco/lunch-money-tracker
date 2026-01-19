@@ -4,12 +4,13 @@ export interface DailyData {
   nbEnfantsCantine: number | null;
   coutConventionnel: number | null;
   coutBio: number | null;
-  coutSigo: number | null;
+  coutSiqo: number | null;
+  coutMatiereTotal: number | null; // Calcul auto: Bio + Conv + SIQO
   prixRevientMoyen: number | null;
   coutEauParEnfant: number | null;
   coutPainBioParEnfant: number | null;
   coutPainConvParEnfant: number | null;
-  coutMaterielParEnfant: number | null;
+  coutMatiereParEnfant: number | null;
   agentHeuresTravail: number | null;
   agentFraisPerso: number | null;
   coutPersonnelParEnfant: number | null;
@@ -35,7 +36,7 @@ export interface MonthSummary {
   totalEnfants: number;
   totalCoutBio: number;
   totalCoutConventionnel: number;
-  totalCoutSigo: number;
+  totalCoutSiqo: number;
   coutMoyenParEnfant: number;
   totalDechets: number;
 }
