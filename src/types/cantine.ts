@@ -49,6 +49,7 @@ export const formatDateToFrench = (date: Date): string => {
 };
 
 export const parseFrenchDate = (dateStr: string): Date | null => {
+  if (!dateStr || typeof dateStr !== 'string') return null;
   const parts = dateStr.split('/');
   if (parts.length !== 3) return null;
   const [day, month, year] = parts.map(Number);
