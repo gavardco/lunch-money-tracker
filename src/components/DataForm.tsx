@@ -25,6 +25,7 @@ const emptyData: DailyData = {
   date: getTodayFrenchDate(),
   nbEnfantsALSH: null,
   nbEnfantsCantine: null,
+  nbEnfantsMercrediALSH: null,
   coutConventionnel: null,
   coutBio: null,
   coutSiqo: null,
@@ -208,6 +209,7 @@ const DataForm = ({ data, onSave, mode, trigger }: DataFormProps) => {
                   </div>
                   <InputField label="Nb enfants cantine" field="nbEnfantsCantine" step="1" />
                   <InputField label="Nb enfants ALSH" field="nbEnfantsALSH" step="1" />
+                  <InputField label="Repas Enf Mercredi ALSH" field="nbEnfantsMercrediALSH" step="1" />
                   <InputField label="Repas adultes" field="repasAdultes" step="1" />
                   <InputField label="Mercredi (enfants)" field="mercredi" step="1" />
                 </div>

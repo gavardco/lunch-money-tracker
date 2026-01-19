@@ -64,6 +64,7 @@ const DataTable = ({ data, onAdd, onUpdate, onDelete }: DataTableProps) => {
                 <TableHead className="font-semibold sticky left-0 bg-muted/50 z-10 w-28">Date</TableHead>
                 <TableHead className="font-semibold whitespace-nowrap">Repas Enf. ALSH</TableHead>
                 <TableHead className="font-semibold whitespace-nowrap">Repas Enf. Cantine</TableHead>
+                <TableHead className="font-semibold whitespace-nowrap">Repas Enf Mercredi ALSH</TableHead>
                 <TableHead className="font-semibold whitespace-nowrap text-conventionnel">Coût Conv.</TableHead>
                 <TableHead className="font-semibold whitespace-nowrap text-bio">Coût Bio</TableHead>
                 <TableHead className="font-semibold whitespace-nowrap text-siqo">Coût SIQO</TableHead>
@@ -96,7 +97,7 @@ const DataTable = ({ data, onAdd, onUpdate, onDelete }: DataTableProps) => {
             <TableBody>
               {data.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={29} className="h-32 text-center">
+                  <TableCell colSpan={30} className="h-32 text-center">
                     <div className="flex flex-col items-center gap-3 text-muted-foreground">
                       <p>Aucune donnée pour ce mois</p>
                       <DataForm 
@@ -126,6 +127,7 @@ const DataTable = ({ data, onAdd, onUpdate, onDelete }: DataTableProps) => {
                       </TableCell>
                       <TableCell>{formatNumber(row.nbEnfantsALSH)}</TableCell>
                       <TableCell>{formatNumber(row.nbEnfantsCantine)}</TableCell>
+                      <TableCell>{formatNumber(row.nbEnfantsMercrediALSH)}</TableCell>
                       <TableCell className="text-conventionnel font-medium">{formatCurrency(row.coutConventionnel)}</TableCell>
                       <TableCell className="text-bio font-medium">{formatCurrency(row.coutBio)}</TableCell>
                       <TableCell className="text-siqo font-medium">{formatCurrency(row.coutSiqo)}</TableCell>
