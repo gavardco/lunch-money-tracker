@@ -104,11 +104,15 @@ const DataForm = ({ data, onSave, mode, trigger }: DataFormProps) => {
     const totalEnfants = (formData.nbEnfantsCantine || 0) + (formData.nbEnfantsALSH || 0);
     const coutMatiereTotal = (formData.coutBio || 0) + (formData.coutConventionnel || 0) + (formData.coutSiqo || 0);
     const coutMatiereParEnfant = totalEnfants > 0 ? coutMatiereTotal / totalEnfants : null;
+    const coutPersonnelParEnfant = totalEnfants > 0 && formData.agentFraisPerso 
+      ? formData.agentFraisPerso / totalEnfants 
+      : null;
     
     const updatedData = {
       ...formData,
       coutMatiereTotal: coutMatiereTotal > 0 ? parseFloat(coutMatiereTotal.toFixed(2)) : null,
       coutMatiereParEnfant: coutMatiereParEnfant ? parseFloat(coutMatiereParEnfant.toFixed(2)) : null,
+      coutPersonnelParEnfant: coutPersonnelParEnfant ? parseFloat(coutPersonnelParEnfant.toFixed(2)) : null,
       prixRevientMoyen: totalEnfants > 0 ? parseFloat((coutMatiereTotal / totalEnfants).toFixed(2)) : null,
       dechetPrimaireParEnfant: formData.dechetPrimaireNbEnfants && formData.dechetPrimairePoids 
         ? parseFloat((formData.dechetPrimairePoids / formData.dechetPrimaireNbEnfants).toFixed(3)) 
@@ -239,7 +243,18 @@ const DataForm = ({ data, onSave, mode, trigger }: DataFormProps) => {
                   <InputField label="Coût pain conv./enfant" field="coutPainConvParEnfant" unit="€" />
                   <InputField label="Heures travail agent" field="agentHeuresTravail" unit="h" />
                   <InputField label="Frais personnel agent" field="agentFraisPerso" unit="€" />
-                  <InputField label="Coût personnel/enfant" field="coutPersonnelParEnfant" unit="€" />
+                  <div className="space-y-1.5 bg-secondary/10 p-3 rounded-lg col-span-2">
+                    <Label className="text-sm font-medium text-secondary-foreground">
+                      Coût personnel/repas enfant <span className="text-muted-foreground">(calculé auto: Frais perso ÷ Nb repas)</span>
+                    </Label>
+                    <div className="text-xl font-bold text-secondary-foreground">
+                      {(() => {
+                        const totalEnfants = (formData.nbEnfantsCantine || 0) + (formData.nbEnfantsALSH || 0);
+                        const fraisPerso = formData.agentFraisPerso || 0;
+                        return totalEnfants > 0 && fraisPerso > 0 ? (fraisPerso / totalEnfants).toFixed(2) : '—';
+                      })()} €
+                    </div>
+                  </div>
                 </div>
               </TabsContent>
               
