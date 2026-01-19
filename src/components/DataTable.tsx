@@ -8,7 +8,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 import {
   AlertDialog,
@@ -33,8 +33,18 @@ interface DataTableProps {
 
 const DataTable = ({ data, onAdd, onUpdate, onDelete }: DataTableProps) => {
   const formatCurrency = (value: number | null) => {
-    if (value === null) return "—";
+    if (value === null || value === undefined) return "—";
     return `${value.toFixed(2)} €`;
+  };
+
+  const formatNumber = (value: number | null) => {
+    if (value === null || value === undefined) return "—";
+    return value.toString();
+  };
+
+  const formatDecimal = (value: number | null, decimals: number = 3) => {
+    if (value === null || value === undefined) return "—";
+    return value.toFixed(decimals);
   };
 
   return (
@@ -46,129 +56,147 @@ const DataTable = ({ data, onAdd, onUpdate, onDelete }: DataTableProps) => {
         <DataForm mode="add" onSave={onAdd} />
       </div>
       
-      <ScrollArea className="h-[400px]">
-        <Table>
-          <TableHeader>
-            <TableRow className="bg-muted/50">
-              <TableHead className="font-semibold w-16">Jour</TableHead>
-              <TableHead className="font-semibold">Enfants</TableHead>
-              <TableHead className="font-semibold">Coût Bio</TableHead>
-              <TableHead className="font-semibold">Coût Conv.</TableHead>
-              <TableHead className="font-semibold">Coût SIGO</TableHead>
-              <TableHead className="font-semibold">Prix Moyen</TableHead>
-              <TableHead className="font-semibold">Coût/Enfant</TableHead>
-              <TableHead className="font-semibold w-24 text-right">Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {data.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={8} className="h-32 text-center">
-                  <div className="flex flex-col items-center gap-3 text-muted-foreground">
-                    <p>Aucune donnée pour ce mois</p>
-                    <DataForm 
-                      mode="add" 
-                      onSave={onAdd}
-                      trigger={
-                        <Button variant="outline" size="sm">
-                          <Plus className="h-4 w-4 mr-2" />
-                          Ajouter la première journée
-                        </Button>
-                      }
-                    />
-                  </div>
-                </TableCell>
+      <ScrollArea className="h-[500px] w-full">
+        <div className="min-w-[2000px]">
+          <Table>
+            <TableHeader>
+              <TableRow className="bg-muted/50">
+                <TableHead className="font-semibold sticky left-0 bg-muted/50 z-10 w-16">Jour</TableHead>
+                <TableHead className="font-semibold whitespace-nowrap">Enf. ALSH</TableHead>
+                <TableHead className="font-semibold whitespace-nowrap">Enf. Cantine</TableHead>
+                <TableHead className="font-semibold whitespace-nowrap text-conventionnel">Coût Conv.</TableHead>
+                <TableHead className="font-semibold whitespace-nowrap text-bio">Coût Bio</TableHead>
+                <TableHead className="font-semibold whitespace-nowrap text-sigo">Coût SIGO</TableHead>
+                <TableHead className="font-semibold whitespace-nowrap">Prix Moyen</TableHead>
+                <TableHead className="font-semibold whitespace-nowrap">Coût Eau/Enf</TableHead>
+                <TableHead className="font-semibold whitespace-nowrap">Pain Bio/Enf</TableHead>
+                <TableHead className="font-semibold whitespace-nowrap">Pain Conv./Enf</TableHead>
+                <TableHead className="font-semibold whitespace-nowrap">Coût Mat./Enf</TableHead>
+                <TableHead className="font-semibold whitespace-nowrap">Heures Agent</TableHead>
+                <TableHead className="font-semibold whitespace-nowrap">Frais Perso</TableHead>
+                <TableHead className="font-semibold whitespace-nowrap">Coût Pers./Enf</TableHead>
+                <TableHead className="font-semibold whitespace-nowrap">Prim. Réel</TableHead>
+                <TableHead className="font-semibold whitespace-nowrap">Prim. 7h</TableHead>
+                <TableHead className="font-semibold whitespace-nowrap">Mat. Réel</TableHead>
+                <TableHead className="font-semibold whitespace-nowrap">Mat. 7h</TableHead>
+                <TableHead className="font-semibold whitespace-nowrap">Repas Adultes</TableHead>
+                <TableHead className="font-semibold whitespace-nowrap">Mercredi</TableHead>
+                <TableHead className="font-semibold whitespace-nowrap">O Merv. ALSH</TableHead>
+                <TableHead className="font-semibold whitespace-nowrap">Adulte O Merv.</TableHead>
+                <TableHead className="font-semibold whitespace-nowrap">Déch. Prim. Nb</TableHead>
+                <TableHead className="font-semibold whitespace-nowrap">Déch. Prim. Poids</TableHead>
+                <TableHead className="font-semibold whitespace-nowrap">Déch. Prim./Enf</TableHead>
+                <TableHead className="font-semibold whitespace-nowrap">Déch. Mat. Nb</TableHead>
+                <TableHead className="font-semibold whitespace-nowrap">Déch. Mat. Poids</TableHead>
+                <TableHead className="font-semibold whitespace-nowrap">Déch. Mat./Enf</TableHead>
+                <TableHead className="font-semibold w-24 text-right sticky right-0 bg-muted/50 z-10">Actions</TableHead>
               </TableRow>
-            ) : (
-              data.map((row) => {
-                const totalEnfants = (row.nbEnfantsCantine || 0) + (row.nbEnfantsALSH || 0);
-                if (totalEnfants === 0 && !row.coutBio && !row.coutConventionnel && !row.coutSigo) return null;
-                
-                return (
-                  <TableRow key={row.date} className="hover:bg-muted/30 transition-colors group">
-                    <TableCell className="font-medium">
-                      <Badge variant="outline" className="font-mono">
-                        {row.date}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex flex-col gap-0.5">
-                        {row.nbEnfantsCantine !== null && row.nbEnfantsCantine > 0 && (
-                          <span className="text-sm">
-                            <span className="text-muted-foreground">Cantine:</span>{" "}
-                            <span className="font-medium">{row.nbEnfantsCantine}</span>
-                          </span>
-                        )}
-                        {row.nbEnfantsALSH !== null && row.nbEnfantsALSH > 0 && (
-                          <span className="text-sm">
-                            <span className="text-muted-foreground">ALSH:</span>{" "}
-                            <span className="font-medium">{row.nbEnfantsALSH}</span>
-                          </span>
-                        )}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <span className="text-bio font-medium">
-                        {formatCurrency(row.coutBio)}
-                      </span>
-                    </TableCell>
-                    <TableCell>
-                      <span className="text-conventionnel font-medium">
-                        {formatCurrency(row.coutConventionnel)}
-                      </span>
-                    </TableCell>
-                    <TableCell>
-                      <span className="text-sigo font-medium">
-                        {formatCurrency(row.coutSigo)}
-                      </span>
-                    </TableCell>
-                    <TableCell className="font-semibold">
-                      {formatCurrency(row.prixRevientMoyen)}
-                    </TableCell>
-                    <TableCell>
-                      {formatCurrency(row.coutPersonnelParEnfant)}
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <DataForm 
-                          mode="edit" 
-                          data={row} 
-                          onSave={(updatedData) => onUpdate(row.date, updatedData)} 
-                        />
-                        <AlertDialog>
-                          <AlertDialogTrigger asChild>
-                            <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:text-destructive">
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          </AlertDialogTrigger>
-                          <AlertDialogContent>
-                            <AlertDialogHeader>
-                              <AlertDialogTitle>Supprimer cette entrée ?</AlertDialogTitle>
-                              <AlertDialogDescription>
-                                Êtes-vous sûr de vouloir supprimer les données du jour {row.date} ?
-                                Cette action est irréversible.
-                              </AlertDialogDescription>
-                            </AlertDialogHeader>
-                            <AlertDialogFooter>
-                              <AlertDialogCancel>Annuler</AlertDialogCancel>
-                              <AlertDialogAction
-                                onClick={() => onDelete(row.date)}
-                                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                              >
-                                Supprimer
-                              </AlertDialogAction>
-                            </AlertDialogFooter>
-                          </AlertDialogContent>
-                        </AlertDialog>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                );
-              })
-            )}
-          </TableBody>
-        </Table>
+            </TableHeader>
+            <TableBody>
+              {data.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={29} className="h-32 text-center">
+                    <div className="flex flex-col items-center gap-3 text-muted-foreground">
+                      <p>Aucune donnée pour ce mois</p>
+                      <DataForm 
+                        mode="add" 
+                        onSave={onAdd}
+                        trigger={
+                          <Button variant="outline" size="sm">
+                            <Plus className="h-4 w-4 mr-2" />
+                            Ajouter la première journée
+                          </Button>
+                        }
+                      />
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ) : (
+                data.map((row) => {
+                  const totalEnfants = (row.nbEnfantsCantine || 0) + (row.nbEnfantsALSH || 0);
+                  if (totalEnfants === 0 && !row.coutBio && !row.coutConventionnel && !row.coutSigo) return null;
+                  
+                  return (
+                    <TableRow key={row.date} className="hover:bg-muted/30 transition-colors group">
+                      <TableCell className="font-medium sticky left-0 bg-card group-hover:bg-muted/30 z-10">
+                        <Badge variant="outline" className="font-mono">
+                          {row.date}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>{formatNumber(row.nbEnfantsALSH)}</TableCell>
+                      <TableCell>{formatNumber(row.nbEnfantsCantine)}</TableCell>
+                      <TableCell className="text-conventionnel font-medium">{formatCurrency(row.coutConventionnel)}</TableCell>
+                      <TableCell className="text-bio font-medium">{formatCurrency(row.coutBio)}</TableCell>
+                      <TableCell className="text-sigo font-medium">{formatCurrency(row.coutSigo)}</TableCell>
+                      <TableCell className="font-semibold">{formatCurrency(row.prixRevientMoyen)}</TableCell>
+                      <TableCell>{formatCurrency(row.coutEauParEnfant)}</TableCell>
+                      <TableCell>{formatCurrency(row.coutPainBioParEnfant)}</TableCell>
+                      <TableCell>{formatCurrency(row.coutPainConvParEnfant)}</TableCell>
+                      <TableCell>{formatCurrency(row.coutMaterielParEnfant)}</TableCell>
+                      <TableCell>{formatNumber(row.agentHeuresTravail)}</TableCell>
+                      <TableCell>{formatCurrency(row.agentFraisPerso)}</TableCell>
+                      <TableCell>{formatCurrency(row.coutPersonnelParEnfant)}</TableCell>
+                      <TableCell>{formatNumber(row.primairesReel)}</TableCell>
+                      <TableCell>{formatNumber(row.primaires7h)}</TableCell>
+                      <TableCell>{formatNumber(row.maternellesReel)}</TableCell>
+                      <TableCell>{formatNumber(row.maternelles7h)}</TableCell>
+                      <TableCell>{formatNumber(row.repasAdultes)}</TableCell>
+                      <TableCell>{formatNumber(row.mercredi)}</TableCell>
+                      <TableCell>{formatNumber(row.oMerveillesALSH)}</TableCell>
+                      <TableCell>{formatNumber(row.adulteOMerveillesALSH)}</TableCell>
+                      <TableCell>{formatNumber(row.dechetPrimaireNbEnfants)}</TableCell>
+                      <TableCell>{formatDecimal(row.dechetPrimairePoids)} kg</TableCell>
+                      <TableCell>{formatDecimal(row.dechetPrimaireParEnfant)}</TableCell>
+                      <TableCell>{formatNumber(row.dechetMaternelleNbEnfants)}</TableCell>
+                      <TableCell>{formatDecimal(row.dechetMaternellePoids)} kg</TableCell>
+                      <TableCell>{formatDecimal(row.dechetMaternelleParEnfant)}</TableCell>
+                      <TableCell className="sticky right-0 bg-card group-hover:bg-muted/30 z-10">
+                        <div className="flex items-center justify-end gap-1">
+                          <DataForm 
+                            mode="edit" 
+                            data={row} 
+                            onSave={(updatedData) => onUpdate(row.date, updatedData)} 
+                          />
+                          <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                              <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:text-destructive">
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>Supprimer cette entrée ?</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  Êtes-vous sûr de vouloir supprimer les données du jour {row.date} ?
+                                  Cette action est irréversible.
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel>Annuler</AlertDialogCancel>
+                                <AlertDialogAction
+                                  onClick={() => onDelete(row.date)}
+                                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                >
+                                  Supprimer
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })
+              )}
+            </TableBody>
+          </Table>
+        </div>
+        <ScrollBar orientation="horizontal" />
       </ScrollArea>
+      
+      <p className="text-xs text-muted-foreground mt-3 text-center">
+        ← Faites défiler horizontalement pour voir toutes les colonnes →
+      </p>
     </div>
   );
 };
