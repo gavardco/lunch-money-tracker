@@ -10,38 +10,45 @@ import {
   Legend,
 } from "recharts";
 
-interface CostChartProps {
+interface StaffCostsChartProps {
   monthlyData: MonthlyData[];
 }
 
-const CostChart = ({ monthlyData }: CostChartProps) => {
+const StaffCostsChart = ({ monthlyData }: StaffCostsChartProps) => {
   const chartData = monthlyData.map((d) => ({
     mois: d.month,
-    Bio: d.totalCoutBio,
-    Conventionnel: d.totalCoutConventionnel,
-    SIGO: d.totalCoutSigo,
+    "Frais Cantine": d.fraisPersonnelCantine,
+    "Frais ALSH": d.fraisPersonnelALSH,
   }));
+
+  // Calculer les totaux annuels
+  const totalFraisCantine = monthlyData.reduce((sum, d) => sum + d.fraisPersonnelCantine, 0);
+  const totalFraisALSH = monthlyData.reduce((sum, d) => sum + d.fraisPersonnelALSH, 0);
 
   return (
     <div className="stat-card animate-slide-up">
-      <h3 className="text-lg font-semibold font-display mb-4">
-        Évolution annuelle des coûts alimentaires
+      <h3 className="text-lg font-semibold font-display mb-2">
+        Frais personnel annuels
       </h3>
-      <div className="h-[300px]">
+      <div className="flex gap-4 mb-4 text-sm">
+        <span className="text-muted-foreground">
+          Cantine: <strong className="text-primary">{totalFraisCantine.toFixed(0)} €</strong>
+        </span>
+        <span className="text-muted-foreground">
+          ALSH: <strong className="text-warning">{totalFraisALSH.toFixed(0)} €</strong>
+        </span>
+      </div>
+      <div className="h-[280px]">
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart data={chartData}>
             <defs>
-              <linearGradient id="colorBio" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="hsl(142, 70%, 45%)" stopOpacity={0.3} />
-                <stop offset="95%" stopColor="hsl(142, 70%, 45%)" stopOpacity={0} />
-              </linearGradient>
-              <linearGradient id="colorConv" x1="0" y1="0" x2="0" y2="1">
+              <linearGradient id="colorCantine" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="5%" stopColor="hsl(210, 60%, 50%)" stopOpacity={0.3} />
                 <stop offset="95%" stopColor="hsl(210, 60%, 50%)" stopOpacity={0} />
               </linearGradient>
-              <linearGradient id="colorSigo" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="hsl(280, 60%, 50%)" stopOpacity={0.3} />
-                <stop offset="95%" stopColor="hsl(280, 60%, 50%)" stopOpacity={0} />
+              <linearGradient id="colorALSH" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="hsl(38, 92%, 50%)" stopOpacity={0.3} />
+                <stop offset="95%" stopColor="hsl(38, 92%, 50%)" stopOpacity={0} />
               </linearGradient>
             </defs>
             <CartesianGrid strokeDasharray="3 3" stroke="hsl(210, 20%, 90%)" />
@@ -65,27 +72,19 @@ const CostChart = ({ monthlyData }: CostChartProps) => {
             <Legend />
             <Area
               type="monotone"
-              dataKey="Bio"
-              stroke="hsl(142, 70%, 45%)"
-              strokeWidth={2}
-              fillOpacity={1}
-              fill="url(#colorBio)"
-            />
-            <Area
-              type="monotone"
-              dataKey="Conventionnel"
+              dataKey="Frais Cantine"
               stroke="hsl(210, 60%, 50%)"
               strokeWidth={2}
               fillOpacity={1}
-              fill="url(#colorConv)"
+              fill="url(#colorCantine)"
             />
             <Area
               type="monotone"
-              dataKey="SIGO"
-              stroke="hsl(280, 60%, 50%)"
+              dataKey="Frais ALSH"
+              stroke="hsl(38, 92%, 50%)"
               strokeWidth={2}
               fillOpacity={1}
-              fill="url(#colorSigo)"
+              fill="url(#colorALSH)"
             />
           </AreaChart>
         </ResponsiveContainer>
@@ -94,4 +93,4 @@ const CostChart = ({ monthlyData }: CostChartProps) => {
   );
 };
 
-export default CostChart;
+export default StaffCostsChart;
