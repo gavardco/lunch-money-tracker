@@ -17,6 +17,7 @@ export interface MonthlyData {
   totalFraisPersonnel: number;
   heuresAgentCantine: number;
   heuresAgentALSH: number;
+  heuresAgentMercredi: number;
   fraisPersonnelCantine: number;
   fraisPersonnelALSH: number;
 }
@@ -42,6 +43,7 @@ export const aggregateByMonth = (data: DailyData[], selectedMonth: string): Mont
     totalFraisPersonnel: number;
     heuresAgentCantine: number;
     heuresAgentALSH: number;
+    heuresAgentMercredi: number;
     fraisPersonnelCantine: number;
     fraisPersonnelALSH: number;
   }> = {};
@@ -63,6 +65,7 @@ export const aggregateByMonth = (data: DailyData[], selectedMonth: string): Mont
       totalFraisPersonnel: 0,
       heuresAgentCantine: 0,
       heuresAgentALSH: 0,
+      heuresAgentMercredi: 0,
       fraisPersonnelCantine: 0,
       fraisPersonnelALSH: 0,
     };
@@ -101,6 +104,10 @@ export const aggregateByMonth = (data: DailyData[], selectedMonth: string): Mont
     if (isALSH) {
       monthlyTotals[schoolYearIndex].heuresAgentALSH += d.agentHeuresTravail || 0;
       monthlyTotals[schoolYearIndex].fraisPersonnelALSH += d.agentFraisPerso || 0;
+    }
+    // Heures agent pour les mercredis (basé sur le nombre de repas mercredi)
+    if (d.mercredi && d.mercredi > 0) {
+      monthlyTotals[schoolYearIndex].heuresAgentMercredi += d.agentHeuresTravail || 0;
     }
   });
 
