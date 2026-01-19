@@ -2,7 +2,6 @@ export interface DailyData {
   date: string; // Format: "jj/mm/aaaa" (ex: "15/01/2026")
   nbEnfantsALSH: number | null;
   nbEnfantsCantine: number | null;
-  nbEnfantsMercrediALSH: number | null;
   coutConventionnel: number | null;
   coutBio: number | null;
   coutSiqo: number | null;
