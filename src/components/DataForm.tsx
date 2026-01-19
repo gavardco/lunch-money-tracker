@@ -53,6 +53,38 @@ const emptyData: DailyData = {
   dechetMaternelleParEnfant: null,
 };
 
+// Composant InputField défini en dehors pour éviter les re-rendus
+const InputField = ({ 
+  label, 
+  field, 
+  unit = "", 
+  step = "0.01",
+  value,
+  onChange,
+}: { 
+  label: string; 
+  field: keyof DailyData; 
+  unit?: string;
+  step?: string;
+  value: number | null;
+  onChange: (field: keyof DailyData, value: string) => void;
+}) => (
+  <div className="space-y-1.5">
+    <Label htmlFor={field} className="text-sm font-medium">
+      {label} {unit && <span className="text-muted-foreground">({unit})</span>}
+    </Label>
+    <Input
+      id={field}
+      type="number"
+      step={step}
+      value={value ?? ""}
+      onChange={(e) => onChange(field, e.target.value)}
+      className="h-9"
+      placeholder="—"
+    />
+  </div>
+);
+
 const DataForm = ({ data, onSave, mode, trigger }: DataFormProps) => {
   const [open, setOpen] = useState(false);
   const [formData, setFormData] = useState<DailyData>(data || emptyData);
@@ -126,32 +158,6 @@ const DataForm = ({ data, onSave, mode, trigger }: DataFormProps) => {
     setOpen(false);
   };
 
-  const InputField = ({ 
-    label, 
-    field, 
-    unit = "", 
-    step = "0.01" 
-  }: { 
-    label: string; 
-    field: keyof DailyData; 
-    unit?: string;
-    step?: string;
-  }) => (
-    <div className="space-y-1.5">
-      <Label htmlFor={field} className="text-sm font-medium">
-        {label} {unit && <span className="text-muted-foreground">({unit})</span>}
-      </Label>
-      <Input
-        id={field}
-        type="number"
-        step={step}
-        value={formData[field] ?? ""}
-        onChange={(e) => handleChange(field, e.target.value)}
-        className="h-9"
-        placeholder="—"
-      />
-    </div>
-  );
 
   return (
     <Dialog open={open} onOpenChange={handleOpen}>
@@ -206,18 +212,18 @@ const DataForm = ({ data, onSave, mode, trigger }: DataFormProps) => {
                       <p className="text-xs text-destructive">{dateError}</p>
                     )}
                   </div>
-                  <InputField label="Nb enfants cantine" field="nbEnfantsCantine" step="1" />
-                  <InputField label="Nb enfants ALSH" field="nbEnfantsALSH" step="1" />
-                  <InputField label="Repas adultes" field="repasAdultes" step="1" />
-                  <InputField label="Mercredi (enfants)" field="mercredi" step="1" />
+                  <InputField label="Nb enfants cantine" field="nbEnfantsCantine" step="1" value={formData.nbEnfantsCantine} onChange={handleChange} />
+                  <InputField label="Nb enfants ALSH" field="nbEnfantsALSH" step="1" value={formData.nbEnfantsALSH} onChange={handleChange} />
+                  <InputField label="Repas adultes" field="repasAdultes" step="1" value={formData.repasAdultes} onChange={handleChange} />
+                  <InputField label="Mercredi (enfants)" field="mercredi" step="1" value={formData.mercredi} onChange={handleChange} />
                 </div>
               </TabsContent>
               
               <TabsContent value="couts" className="mt-0 space-y-4">
                 <div className="grid grid-cols-2 gap-4">
-                  <InputField label="Coût Bio" field="coutBio" unit="€" />
-                  <InputField label="Coût Conventionnel" field="coutConventionnel" unit="€" />
-                  <InputField label="Coût SIQO" field="coutSiqo" unit="€" />
+                  <InputField label="Coût Bio" field="coutBio" unit="€" value={formData.coutBio} onChange={handleChange} />
+                  <InputField label="Coût Conventionnel" field="coutConventionnel" unit="€" value={formData.coutConventionnel} onChange={handleChange} />
+                  <InputField label="Coût SIQO" field="coutSiqo" unit="€" value={formData.coutSiqo} onChange={handleChange} />
                   <div className="space-y-1.5 bg-primary/10 p-3 rounded-lg col-span-2">
                     <Label className="text-sm font-medium text-primary">
                       Coût matière total <span className="text-muted-foreground">(calculé auto: Bio + Conv. + SIQO)</span>
@@ -238,11 +244,11 @@ const DataForm = ({ data, onSave, mode, trigger }: DataFormProps) => {
                       })()} €
                     </div>
                   </div>
-                  <InputField label="Coût eau/enfant" field="coutEauParEnfant" unit="€" />
-                  <InputField label="Coût pain bio/enfant" field="coutPainBioParEnfant" unit="€" />
-                  <InputField label="Coût pain conv./enfant" field="coutPainConvParEnfant" unit="€" />
-                  <InputField label="Heures travail agent" field="agentHeuresTravail" unit="h" />
-                  <InputField label="Frais personnel agent" field="agentFraisPerso" unit="€" />
+                  <InputField label="Coût eau/enfant" field="coutEauParEnfant" unit="€" value={formData.coutEauParEnfant} onChange={handleChange} />
+                  <InputField label="Coût pain bio/enfant" field="coutPainBioParEnfant" unit="€" value={formData.coutPainBioParEnfant} onChange={handleChange} />
+                  <InputField label="Coût pain conv./enfant" field="coutPainConvParEnfant" unit="€" value={formData.coutPainConvParEnfant} onChange={handleChange} />
+                  <InputField label="Heures travail agent" field="agentHeuresTravail" unit="h" value={formData.agentHeuresTravail} onChange={handleChange} />
+                  <InputField label="Frais personnel agent" field="agentFraisPerso" unit="€" value={formData.agentFraisPerso} onChange={handleChange} />
                   <div className="space-y-1.5 bg-secondary/10 p-3 rounded-lg col-span-2">
                     <Label className="text-sm font-medium text-secondary-foreground">
                       Coût personnel/repas enfant <span className="text-muted-foreground">(calculé auto: Frais perso ÷ Nb repas)</span>
@@ -260,20 +266,20 @@ const DataForm = ({ data, onSave, mode, trigger }: DataFormProps) => {
               
               <TabsContent value="effectifs" className="mt-0 space-y-4">
                 <div className="grid grid-cols-2 gap-4">
-                  <InputField label="Primaires réel" field="primairesReel" step="1" />
-                  <InputField label="Primaires à 7h" field="primaires7h" step="1" />
-                  <InputField label="Maternelles réel" field="maternellesReel" step="1" />
-                  <InputField label="Maternelles à 7h" field="maternelles7h" step="1" />
-                  <InputField label="O Merveilles ALSH" field="oMerveillesALSH" step="1" />
-                  <InputField label="Adultes O Merveilles" field="adulteOMerveillesALSH" step="1" />
+                  <InputField label="Primaires réel" field="primairesReel" step="1" value={formData.primairesReel} onChange={handleChange} />
+                  <InputField label="Primaires à 7h" field="primaires7h" step="1" value={formData.primaires7h} onChange={handleChange} />
+                  <InputField label="Maternelles réel" field="maternellesReel" step="1" value={formData.maternellesReel} onChange={handleChange} />
+                  <InputField label="Maternelles à 7h" field="maternelles7h" step="1" value={formData.maternelles7h} onChange={handleChange} />
+                  <InputField label="O Merveilles ALSH" field="oMerveillesALSH" step="1" value={formData.oMerveillesALSH} onChange={handleChange} />
+                  <InputField label="Adultes O Merveilles" field="adulteOMerveillesALSH" step="1" value={formData.adulteOMerveillesALSH} onChange={handleChange} />
                 </div>
               </TabsContent>
               
               <TabsContent value="dechets" className="mt-0 space-y-4">
                 <h4 className="font-medium text-sm text-muted-foreground mb-2">Primaires</h4>
                 <div className="grid grid-cols-2 gap-4 mb-2">
-                  <InputField label="Nb enfants primaires" field="dechetPrimaireNbEnfants" step="1" />
-                  <InputField label="Poids total primaires" field="dechetPrimairePoids" unit="kg" step="0.001" />
+                  <InputField label="Nb enfants primaires" field="dechetPrimaireNbEnfants" step="1" value={formData.dechetPrimaireNbEnfants} onChange={handleChange} />
+                  <InputField label="Poids total primaires" field="dechetPrimairePoids" unit="kg" step="0.001" value={formData.dechetPrimairePoids} onChange={handleChange} />
                 </div>
                 <div className="space-y-1.5 bg-orange-500/10 p-3 rounded-lg mb-6">
                   <Label className="text-sm font-medium text-orange-700 dark:text-orange-400">
@@ -290,8 +296,8 @@ const DataForm = ({ data, onSave, mode, trigger }: DataFormProps) => {
                 
                 <h4 className="font-medium text-sm text-muted-foreground mb-2">Maternelles</h4>
                 <div className="grid grid-cols-2 gap-4 mb-2">
-                  <InputField label="Nb enfants maternelles" field="dechetMaternelleNbEnfants" step="1" />
-                  <InputField label="Poids total maternelles" field="dechetMaternellePoids" unit="kg" step="0.001" />
+                  <InputField label="Nb enfants maternelles" field="dechetMaternelleNbEnfants" step="1" value={formData.dechetMaternelleNbEnfants} onChange={handleChange} />
+                  <InputField label="Poids total maternelles" field="dechetMaternellePoids" unit="kg" step="0.001" value={formData.dechetMaternellePoids} onChange={handleChange} />
                 </div>
                 <div className="space-y-1.5 bg-purple-500/10 p-3 rounded-lg">
                   <Label className="text-sm font-medium text-purple-700 dark:text-purple-400">
