@@ -81,27 +81,27 @@ const StaffCostsChart = ({ monthlyData }: StaffCostsChartProps) => {
             <Legend />
             <Area
               type="monotone"
-              dataKey="Frais Cantine"
-              stroke="hsl(210, 60%, 50%)"
+              dataKey="Frais Mercredi"
+              stroke="hsl(142, 71%, 45%)"
               strokeWidth={2}
-              fillOpacity={1}
-              fill="url(#colorCantine)"
+              fillOpacity={0.4}
+              fill="url(#colorMercredi)"
             />
             <Area
               type="monotone"
               dataKey="Frais ALSH"
               stroke="hsl(38, 92%, 50%)"
               strokeWidth={2}
-              fillOpacity={1}
+              fillOpacity={0.4}
               fill="url(#colorALSH)"
             />
             <Area
               type="monotone"
-              dataKey="Frais Mercredi"
-              stroke="hsl(142, 71%, 45%)"
+              dataKey="Frais Cantine"
+              stroke="hsl(210, 60%, 50%)"
               strokeWidth={2}
-              fillOpacity={1}
-              fill="url(#colorMercredi)"
+              fillOpacity={0.4}
+              fill="url(#colorCantine)"
             />
           </AreaChart>
         </ResponsiveContainer>
