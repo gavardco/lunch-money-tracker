@@ -14,7 +14,7 @@ import { useCanteenData } from "@/hooks/useCanteenData";
 import { aggregateByMonth } from "@/utils/dataAggregation";
 
 const Index = () => {
-  const { data, selectedMonth, addEntry, updateEntry, deleteEntry } = useCanteenData();
+  const { data, selectedMonth, addEntry, updateEntry, deleteEntry, importData } = useCanteenData();
 
   const monthlyData = useMemo(() => {
     return aggregateByMonth(data, selectedMonth);
@@ -134,6 +134,7 @@ const Index = () => {
           onAdd={addEntry}
           onUpdate={updateEntry}
           onDelete={deleteEntry}
+          onImport={importData}
         />
       </main>
 
