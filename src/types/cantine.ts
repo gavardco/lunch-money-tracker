@@ -5,7 +5,6 @@ export interface DailyData {
   coutConventionnel: number | null;
   coutBio: number | null;
   coutSiqo: number | null;
-  coutMatiereTotal: number | null; // Calcul auto: Bio + Conv + SIQO
   prixRevientMoyen: number | null;
   coutEauParEnfant: number | null;
   coutPainBioParEnfant: number | null;

@@ -81,29 +81,28 @@ const DataTable = ({ data, onAdd, onUpdate, onDelete, onImport }: DataTableProps
             coutConventionnel: parseNumber(values[3] || ""),
             coutBio: parseNumber(values[4] || ""),
             coutSiqo: parseNumber(values[5] || ""),
-            coutMatiereTotal: parseNumber(values[6] || ""),
-            prixRevientMoyen: parseNumber(values[7] || ""),
-            coutEauParEnfant: parseNumber(values[8] || ""),
-            coutPainBioParEnfant: parseNumber(values[9] || ""),
-            coutPainConvParEnfant: parseNumber(values[10] || ""),
-            coutMatiereParEnfant: parseNumber(values[11] || ""),
-            agentHeuresTravail: parseNumber(values[12] || ""),
-            agentFraisPerso: parseNumber(values[13] || ""),
-            coutPersonnelParEnfant: parseNumber(values[14] || ""),
-            primairesReel: parseNumber(values[15] || ""),
-            primaires7h: parseNumber(values[16] || ""),
-            maternellesReel: parseNumber(values[17] || ""),
-            maternelles7h: parseNumber(values[18] || ""),
-            repasAdultes: parseNumber(values[19] || ""),
-            mercredi: parseNumber(values[20] || ""),
-            oMerveillesALSH: parseNumber(values[21] || ""),
-            adulteOMerveillesALSH: parseNumber(values[22] || ""),
-            dechetPrimaireNbEnfants: parseNumber(values[23] || ""),
-            dechetPrimairePoids: parseNumber(values[24] || ""),
-            dechetPrimaireParEnfant: parseNumber(values[25] || ""),
-            dechetMaternelleNbEnfants: parseNumber(values[26] || ""),
-            dechetMaternellePoids: parseNumber(values[27] || ""),
-            dechetMaternelleParEnfant: parseNumber(values[28] || ""),
+            prixRevientMoyen: parseNumber(values[6] || ""),
+            coutEauParEnfant: parseNumber(values[7] || ""),
+            coutPainBioParEnfant: parseNumber(values[8] || ""),
+            coutPainConvParEnfant: parseNumber(values[9] || ""),
+            coutMatiereParEnfant: parseNumber(values[10] || ""),
+            agentHeuresTravail: parseNumber(values[11] || ""),
+            agentFraisPerso: parseNumber(values[12] || ""),
+            coutPersonnelParEnfant: parseNumber(values[13] || ""),
+            primairesReel: parseNumber(values[14] || ""),
+            primaires7h: parseNumber(values[15] || ""),
+            maternellesReel: parseNumber(values[16] || ""),
+            maternelles7h: parseNumber(values[17] || ""),
+            repasAdultes: parseNumber(values[18] || ""),
+            mercredi: parseNumber(values[19] || ""),
+            oMerveillesALSH: parseNumber(values[20] || ""),
+            adulteOMerveillesALSH: parseNumber(values[21] || ""),
+            dechetPrimaireNbEnfants: parseNumber(values[22] || ""),
+            dechetPrimairePoids: parseNumber(values[23] || ""),
+            dechetPrimaireParEnfant: parseNumber(values[24] || ""),
+            dechetMaternelleNbEnfants: parseNumber(values[25] || ""),
+            dechetMaternellePoids: parseNumber(values[26] || ""),
+            dechetMaternelleParEnfant: parseNumber(values[27] || ""),
           };
 
           importedData.push(entry);
@@ -157,7 +156,6 @@ const DataTable = ({ data, onAdd, onUpdate, onDelete, onImport }: DataTableProps
       "Coût Conventionnel",
       "Coût Bio",
       "Coût SIQO",
-      "Coût Matière Total",
       "Prix Revient Moyen",
       "Coût Eau/Enfant",
       "Pain Bio/Enfant",
@@ -192,7 +190,6 @@ const DataTable = ({ data, onAdd, onUpdate, onDelete, onImport }: DataTableProps
         row.coutConventionnel ?? "",
         row.coutBio ?? "",
         row.coutSiqo ?? "",
-        row.coutMatiereTotal ?? "",
         row.prixRevientMoyen ?? "",
         row.coutEauParEnfant ?? "",
         row.coutPainBioParEnfant ?? "",
@@ -277,7 +274,6 @@ const DataTable = ({ data, onAdd, onUpdate, onDelete, onImport }: DataTableProps
                 <TableHead className="font-semibold whitespace-nowrap text-conventionnel">Coût Conv.</TableHead>
                 <TableHead className="font-semibold whitespace-nowrap text-bio">Coût Bio</TableHead>
                 <TableHead className="font-semibold whitespace-nowrap text-siqo">Coût SIQO</TableHead>
-                <TableHead className="font-semibold whitespace-nowrap bg-primary/10 text-primary">Coût Matière Total</TableHead>
                 <TableHead className="font-semibold whitespace-nowrap">Prix Moyen</TableHead>
                 <TableHead className="font-semibold whitespace-nowrap">Coût Eau/Enf</TableHead>
                 <TableHead className="font-semibold whitespace-nowrap">Pain Bio/Enf</TableHead>
@@ -306,7 +302,7 @@ const DataTable = ({ data, onAdd, onUpdate, onDelete, onImport }: DataTableProps
             <TableBody>
               {data.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={29} className="h-32 text-center">
+                  <TableCell colSpan={28} className="h-32 text-center">
                     <div className="flex flex-col items-center gap-3 text-muted-foreground">
                       <p>Aucune donnée pour ce mois</p>
                       <DataForm 
@@ -339,7 +335,6 @@ const DataTable = ({ data, onAdd, onUpdate, onDelete, onImport }: DataTableProps
                       <TableCell className="text-conventionnel font-medium">{formatCurrency(row.coutConventionnel)}</TableCell>
                       <TableCell className="text-bio font-medium">{formatCurrency(row.coutBio)}</TableCell>
                       <TableCell className="text-siqo font-medium">{formatCurrency(row.coutSiqo)}</TableCell>
-                      <TableCell className="bg-primary/10 font-bold text-primary">{formatCurrency(row.coutMatiereTotal)}</TableCell>
                       <TableCell className="font-semibold">{formatCurrency(row.prixRevientMoyen)}</TableCell>
                       <TableCell>{formatCurrency(row.coutEauParEnfant)}</TableCell>
                       <TableCell>{formatCurrency(row.coutPainBioParEnfant)}</TableCell>
