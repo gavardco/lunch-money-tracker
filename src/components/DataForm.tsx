@@ -28,7 +28,6 @@ const emptyData: DailyData = {
   coutConventionnel: null,
   coutBio: null,
   coutSiqo: null,
-  coutMatiereTotal: null,
   prixRevientMoyen: null,
   coutEauParEnfant: null,
   coutPainBioParEnfant: null,
@@ -142,7 +141,6 @@ const DataForm = ({ data, onSave, mode, trigger }: DataFormProps) => {
     
     const updatedData = {
       ...formData,
-      coutMatiereTotal: coutMatiereTotal > 0 ? parseFloat(coutMatiereTotal.toFixed(2)) : null,
       coutMatiereParEnfant: coutMatiereParEnfant ? parseFloat(coutMatiereParEnfant.toFixed(2)) : null,
       coutPersonnelParEnfant: coutPersonnelParEnfant ? parseFloat(coutPersonnelParEnfant.toFixed(2)) : null,
       prixRevientMoyen: totalEnfants > 0 ? parseFloat((coutMatiereTotal / totalEnfants).toFixed(2)) : null,
