@@ -1,4 +1,5 @@
-import { DailyData } from "@/types/cantine";
+import { useRef } from "react";
+import { DailyData, isValidFrenchDate } from "@/types/cantine";
 import {
   Table,
   TableBody,
@@ -21,17 +22,118 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Trash2, Plus, Download } from "lucide-react";
+import { Trash2, Plus, Download, Upload } from "lucide-react";
 import DataForm from "./DataForm";
+import { toast } from "sonner";
 
 interface DataTableProps {
   data: DailyData[];
   onAdd: (data: DailyData) => void;
   onUpdate: (date: string, data: DailyData) => void;
   onDelete: (date: string) => void;
+  onImport?: (data: DailyData[]) => void;
 }
 
-const DataTable = ({ data, onAdd, onUpdate, onDelete }: DataTableProps) => {
+const DataTable = ({ data, onAdd, onUpdate, onDelete, onImport }: DataTableProps) => {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const parseNumber = (value: string): number | null => {
+    if (!value || value.trim() === "") return null;
+    const cleaned = value.replace(",", ".").trim();
+    const num = parseFloat(cleaned);
+    return isNaN(num) ? null : num;
+  };
+
+  const importFromCSV = (file: File) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const text = e.target?.result as string;
+        const lines = text.split(/\r?\n/).filter((line) => line.trim() !== "");
+        
+        if (lines.length < 2) {
+          toast.error("Le fichier CSV est vide ou ne contient pas de données");
+          return;
+        }
+
+        // Ignorer la ligne d'en-tête
+        const dataLines = lines.slice(1);
+        const importedData: DailyData[] = [];
+        let errorsCount = 0;
+
+        dataLines.forEach((line, index) => {
+          const values = line.split(";");
+          
+          if (values.length < 2) return;
+
+          const date = values[0]?.trim();
+          
+          // Valider le format de date
+          if (!date || !isValidFrenchDate(date)) {
+            errorsCount++;
+            return;
+          }
+
+          const entry: DailyData = {
+            date,
+            nbEnfantsALSH: parseNumber(values[1] || ""),
+            nbEnfantsCantine: parseNumber(values[2] || ""),
+            coutConventionnel: parseNumber(values[3] || ""),
+            coutBio: parseNumber(values[4] || ""),
+            coutSiqo: parseNumber(values[5] || ""),
+            coutMatiereTotal: parseNumber(values[6] || ""),
+            prixRevientMoyen: parseNumber(values[7] || ""),
+            coutEauParEnfant: parseNumber(values[8] || ""),
+            coutPainBioParEnfant: parseNumber(values[9] || ""),
+            coutPainConvParEnfant: parseNumber(values[10] || ""),
+            coutMatiereParEnfant: parseNumber(values[11] || ""),
+            agentHeuresTravail: parseNumber(values[12] || ""),
+            agentFraisPerso: parseNumber(values[13] || ""),
+            coutPersonnelParEnfant: parseNumber(values[14] || ""),
+            primairesReel: parseNumber(values[15] || ""),
+            primaires7h: parseNumber(values[16] || ""),
+            maternellesReel: parseNumber(values[17] || ""),
+            maternelles7h: parseNumber(values[18] || ""),
+            repasAdultes: parseNumber(values[19] || ""),
+            mercredi: parseNumber(values[20] || ""),
+            oMerveillesALSH: parseNumber(values[21] || ""),
+            adulteOMerveillesALSH: parseNumber(values[22] || ""),
+            dechetPrimaireNbEnfants: parseNumber(values[23] || ""),
+            dechetPrimairePoids: parseNumber(values[24] || ""),
+            dechetPrimaireParEnfant: parseNumber(values[25] || ""),
+            dechetMaternelleNbEnfants: parseNumber(values[26] || ""),
+            dechetMaternellePoids: parseNumber(values[27] || ""),
+            dechetMaternelleParEnfant: parseNumber(values[28] || ""),
+          };
+
+          importedData.push(entry);
+        });
+
+        if (importedData.length === 0) {
+          toast.error("Aucune donnée valide trouvée dans le fichier CSV");
+          return;
+        }
+
+        if (onImport) {
+          onImport(importedData);
+          toast.success(`${importedData.length} entrée(s) importée(s) avec succès${errorsCount > 0 ? ` (${errorsCount} ligne(s) ignorée(s))` : ""}`);
+        }
+      } catch (error) {
+        console.error("Erreur lors de l'import CSV:", error);
+        toast.error("Erreur lors de la lecture du fichier CSV");
+      }
+    };
+    reader.readAsText(file, "UTF-8");
+  };
+
+  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      importFromCSV(file);
+      // Réinitialiser l'input pour permettre de réimporter le même fichier
+      event.target.value = "";
+    }
+  };
   const formatCurrency = (value: number | null) => {
     if (value === null || value === undefined) return "—";
     return `${value.toFixed(2)} €`;
@@ -136,6 +238,21 @@ const DataTable = ({ data, onAdd, onUpdate, onDelete }: DataTableProps) => {
           Données journalières
         </h3>
         <div className="flex items-center gap-2">
+          <input
+            type="file"
+            ref={fileInputRef}
+            onChange={handleFileSelect}
+            accept=".csv"
+            className="hidden"
+          />
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={() => fileInputRef.current?.click()}
+          >
+            <Upload className="h-4 w-4 mr-2" />
+            Importer CSV
+          </Button>
           <Button 
             variant="outline" 
             size="sm" 

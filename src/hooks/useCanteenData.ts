@@ -61,6 +61,16 @@ export const useCanteenData = () => {
     saveData(newData);
   }, [data, saveData]);
 
+  // Importer des données (remplace les existantes avec les mêmes dates)
+  const importData = useCallback((importedData: DailyData[]) => {
+    const existingDates = new Set(importedData.map((d) => d.date));
+    // Garder les données qui ne sont pas dans l'import
+    const filteredExisting = data.filter((d) => !existingDates.has(d.date));
+    // Combiner et sauvegarder
+    const newData = [...filteredExisting, ...importedData];
+    saveData(newData);
+  }, [data, saveData]);
+
   // Réinitialiser avec les données d'exemple
   const resetToSample = useCallback(() => {
     saveData(sampleData);
@@ -73,6 +83,7 @@ export const useCanteenData = () => {
     addEntry,
     updateEntry,
     deleteEntry,
+    importData,
     resetToSample,
   };
 };
