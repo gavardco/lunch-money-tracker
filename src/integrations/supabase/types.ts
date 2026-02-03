@@ -14,7 +14,108 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      daily_data: {
+        Row: {
+          adulte_o_merveilles_alsh: number | null
+          agent_frais_perso: number | null
+          agent_heures_travail: number | null
+          cout_bio: number | null
+          cout_conventionnel: number | null
+          cout_eau_par_enfant: number | null
+          cout_matiere_par_enfant: number | null
+          cout_pain_bio_par_enfant: number | null
+          cout_pain_conv_par_enfant: number | null
+          cout_personnel_par_enfant: number | null
+          cout_siqo: number | null
+          created_at: string | null
+          date: string
+          dechet_maternelle_nb_enfants: number | null
+          dechet_maternelle_par_enfant: number | null
+          dechet_maternelle_poids: number | null
+          dechet_primaire_nb_enfants: number | null
+          dechet_primaire_par_enfant: number | null
+          dechet_primaire_poids: number | null
+          id: string
+          maternelles_7h: number | null
+          maternelles_reel: number | null
+          mercredi: number | null
+          nb_enfants_alsh: number | null
+          nb_enfants_cantine: number | null
+          o_merveilles_alsh: number | null
+          primaires_7h: number | null
+          primaires_reel: number | null
+          prix_revient_moyen: number | null
+          repas_adultes: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          adulte_o_merveilles_alsh?: number | null
+          agent_frais_perso?: number | null
+          agent_heures_travail?: number | null
+          cout_bio?: number | null
+          cout_conventionnel?: number | null
+          cout_eau_par_enfant?: number | null
+          cout_matiere_par_enfant?: number | null
+          cout_pain_bio_par_enfant?: number | null
+          cout_pain_conv_par_enfant?: number | null
+          cout_personnel_par_enfant?: number | null
+          cout_siqo?: number | null
+          created_at?: string | null
+          date: string
+          dechet_maternelle_nb_enfants?: number | null
+          dechet_maternelle_par_enfant?: number | null
+          dechet_maternelle_poids?: number | null
+          dechet_primaire_nb_enfants?: number | null
+          dechet_primaire_par_enfant?: number | null
+          dechet_primaire_poids?: number | null
+          id?: string
+          maternelles_7h?: number | null
+          maternelles_reel?: number | null
+          mercredi?: number | null
+          nb_enfants_alsh?: number | null
+          nb_enfants_cantine?: number | null
+          o_merveilles_alsh?: number | null
+          primaires_7h?: number | null
+          primaires_reel?: number | null
+          prix_revient_moyen?: number | null
+          repas_adultes?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          adulte_o_merveilles_alsh?: number | null
+          agent_frais_perso?: number | null
+          agent_heures_travail?: number | null
+          cout_bio?: number | null
+          cout_conventionnel?: number | null
+          cout_eau_par_enfant?: number | null
+          cout_matiere_par_enfant?: number | null
+          cout_pain_bio_par_enfant?: number | null
+          cout_pain_conv_par_enfant?: number | null
+          cout_personnel_par_enfant?: number | null
+          cout_siqo?: number | null
+          created_at?: string | null
+          date?: string
+          dechet_maternelle_nb_enfants?: number | null
+          dechet_maternelle_par_enfant?: number | null
+          dechet_maternelle_poids?: number | null
+          dechet_primaire_nb_enfants?: number | null
+          dechet_primaire_par_enfant?: number | null
+          dechet_primaire_poids?: number | null
+          id?: string
+          maternelles_7h?: number | null
+          maternelles_reel?: number | null
+          mercredi?: number | null
+          nb_enfants_alsh?: number | null
+          nb_enfants_cantine?: number | null
+          o_merveilles_alsh?: number | null
+          primaires_7h?: number | null
+          primaires_reel?: number | null
+          prix_revient_moyen?: number | null
+          repas_adultes?: number | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
