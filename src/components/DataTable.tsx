@@ -44,6 +44,37 @@ const DataTable = ({ data, onAdd, onUpdate, onDelete, onImport }: DataTableProps
     return isNaN(num) ? null : num;
   };
 
+  // Convertir une date du format Excel "05-janv" + mois + année en "jj/mm/aaaa"
+  const parseExcelDate = (dateStr: string, monthName: string, year: string): string | null => {
+    const monthMap: { [key: string]: string } = {
+      "janvier": "01", "janv": "01",
+      "février": "02", "févr": "02", "fevrier": "02", "fevr": "02",
+      "mars": "03",
+      "avril": "04", "avr": "04",
+      "mai": "05",
+      "juin": "06",
+      "juillet": "07", "juil": "07",
+      "août": "08", "aout": "08",
+      "septembre": "09", "sept": "09",
+      "octobre": "10", "oct": "10",
+      "novembre": "11", "nov": "11",
+      "décembre": "12", "dec": "12", "decembre": "12"
+    };
+
+    // Extraire le jour du format "05-janv"
+    const dayMatch = dateStr.match(/^(\d{1,2})/);
+    if (!dayMatch) return null;
+    
+    const day = dayMatch[1].padStart(2, "0");
+    const monthKey = monthName.toLowerCase().trim();
+    const month = monthMap[monthKey];
+    const yearNum = year.trim();
+    
+    if (!month || !yearNum || isNaN(parseInt(yearNum))) return null;
+    
+    return `${day}/${month}/${yearNum}`;
+  };
+
   const importFromCSV = (file: File) => {
     const reader = new FileReader();
     reader.onload = (e) => {
@@ -61,14 +92,31 @@ const DataTable = ({ data, onAdd, onUpdate, onDelete, onImport }: DataTableProps
         const importedData: DailyData[] = [];
         let errorsCount = 0;
 
-        dataLines.forEach((line, index) => {
+        dataLines.forEach((line) => {
           const values = line.split(";");
           
-          if (values.length < 2) return;
+          if (values.length < 3) return;
 
-          const date = values[0]?.trim();
+          // Détecter le format du CSV
+          let date: string | null = null;
+          let dataOffset = 0;
+
+          const firstCol = values[0]?.trim() || "";
           
-          // Valider le format de date
+          // Format Excel: "05-janv;Janvier;2026;..."
+          if (firstCol.includes("-") && !firstCol.includes("/")) {
+            const monthName = values[1]?.trim() || "";
+            const year = values[2]?.trim() || "";
+            date = parseExcelDate(firstCol, monthName, year);
+            dataOffset = 3; // Les données commencent à l'index 3
+          } 
+          // Format standard: "05/01/2026;..."
+          else if (isValidFrenchDate(firstCol)) {
+            date = firstCol;
+            dataOffset = 1; // Les données commencent à l'index 1
+          }
+          
+          // Valider la date
           if (!date || !isValidFrenchDate(date)) {
             errorsCount++;
             return;
@@ -76,33 +124,33 @@ const DataTable = ({ data, onAdd, onUpdate, onDelete, onImport }: DataTableProps
 
           const entry: DailyData = {
             date,
-            nbEnfantsALSH: parseNumber(values[1] || ""),
-            nbEnfantsCantine: parseNumber(values[2] || ""),
-            coutConventionnel: parseNumber(values[3] || ""),
-            coutBio: parseNumber(values[4] || ""),
-            coutSiqo: parseNumber(values[5] || ""),
-            prixRevientMoyen: parseNumber(values[6] || ""),
-            coutEauParEnfant: parseNumber(values[7] || ""),
-            coutPainBioParEnfant: parseNumber(values[8] || ""),
-            coutPainConvParEnfant: parseNumber(values[9] || ""),
-            coutMatiereParEnfant: parseNumber(values[10] || ""),
-            agentHeuresTravail: parseNumber(values[11] || ""),
-            agentFraisPerso: parseNumber(values[12] || ""),
-            coutPersonnelParEnfant: parseNumber(values[13] || ""),
-            primairesReel: parseNumber(values[14] || ""),
-            primaires7h: parseNumber(values[15] || ""),
-            maternellesReel: parseNumber(values[16] || ""),
-            maternelles7h: parseNumber(values[17] || ""),
-            repasAdultes: parseNumber(values[18] || ""),
-            mercredi: parseNumber(values[19] || ""),
-            oMerveillesALSH: parseNumber(values[20] || ""),
-            adulteOMerveillesALSH: parseNumber(values[21] || ""),
-            dechetPrimaireNbEnfants: parseNumber(values[22] || ""),
-            dechetPrimairePoids: parseNumber(values[23] || ""),
-            dechetPrimaireParEnfant: parseNumber(values[24] || ""),
-            dechetMaternelleNbEnfants: parseNumber(values[25] || ""),
-            dechetMaternellePoids: parseNumber(values[26] || ""),
-            dechetMaternelleParEnfant: parseNumber(values[27] || ""),
+            nbEnfantsALSH: parseNumber(values[dataOffset] || ""),
+            nbEnfantsCantine: parseNumber(values[dataOffset + 1] || ""),
+            coutConventionnel: parseNumber(values[dataOffset + 2] || ""),
+            coutBio: parseNumber(values[dataOffset + 3] || ""),
+            coutSiqo: parseNumber(values[dataOffset + 4] || ""),
+            prixRevientMoyen: parseNumber(values[dataOffset + 5] || ""),
+            coutEauParEnfant: parseNumber(values[dataOffset + 6] || ""),
+            coutPainBioParEnfant: parseNumber(values[dataOffset + 7] || ""),
+            coutPainConvParEnfant: parseNumber(values[dataOffset + 8] || ""),
+            coutMatiereParEnfant: parseNumber(values[dataOffset + 9] || ""),
+            agentHeuresTravail: parseNumber(values[dataOffset + 10] || ""),
+            agentFraisPerso: parseNumber(values[dataOffset + 11] || ""),
+            coutPersonnelParEnfant: parseNumber(values[dataOffset + 12] || ""),
+            primairesReel: parseNumber(values[dataOffset + 13] || ""),
+            primaires7h: parseNumber(values[dataOffset + 14] || ""),
+            maternellesReel: parseNumber(values[dataOffset + 15] || ""),
+            maternelles7h: parseNumber(values[dataOffset + 16] || ""),
+            repasAdultes: parseNumber(values[dataOffset + 17] || ""),
+            mercredi: parseNumber(values[dataOffset + 18] || ""),
+            oMerveillesALSH: parseNumber(values[dataOffset + 19] || ""),
+            adulteOMerveillesALSH: parseNumber(values[dataOffset + 20] || ""),
+            dechetPrimaireNbEnfants: parseNumber(values[dataOffset + 21] || ""),
+            dechetPrimairePoids: parseNumber(values[dataOffset + 22] || ""),
+            dechetPrimaireParEnfant: parseNumber(values[dataOffset + 23] || ""),
+            dechetMaternelleNbEnfants: parseNumber(values[dataOffset + 24] || ""),
+            dechetMaternellePoids: parseNumber(values[dataOffset + 25] || ""),
+            dechetMaternelleParEnfant: parseNumber(values[dataOffset + 26] || ""),
           };
 
           importedData.push(entry);
