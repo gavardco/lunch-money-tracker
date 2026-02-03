@@ -1,5 +1,6 @@
 import { useRef } from "react";
 import { DailyData, isValidFrenchDate } from "@/types/cantine";
+import * as XLSX from "xlsx";
 import {
   Table,
   TableBody,
@@ -173,10 +174,123 @@ const DataTable = ({ data, onAdd, onUpdate, onDelete, onImport }: DataTableProps
     reader.readAsText(file, "UTF-8");
   };
 
+  const importFromExcel = (file: File) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const data = new Uint8Array(e.target?.result as ArrayBuffer);
+        const workbook = XLSX.read(data, { type: "array" });
+        
+        // Prendre la première feuille
+        const firstSheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[firstSheetName];
+        
+        // Convertir en tableau de tableaux
+        const rows: (string | number | null)[][] = XLSX.utils.sheet_to_json(worksheet, { 
+          header: 1,
+          raw: false,
+          defval: ""
+        });
+        
+        if (rows.length < 2) {
+          toast.error("Le fichier Excel est vide ou ne contient pas de données");
+          return;
+        }
+
+        // Ignorer la ligne d'en-tête
+        const dataRows = rows.slice(1);
+        const importedData: DailyData[] = [];
+        let errorsCount = 0;
+
+        dataRows.forEach((row) => {
+          if (!row || row.length < 3) return;
+          
+          const values = row.map(v => String(v ?? ""));
+
+          // Détecter le format
+          let date: string | null = null;
+          let dataOffset = 0;
+
+          const firstCol = values[0]?.trim() || "";
+          
+          // Format Excel: "05-janv;Janvier;2026;..."
+          if (firstCol.includes("-") && !firstCol.includes("/")) {
+            const monthName = values[1]?.trim() || "";
+            const year = values[2]?.trim() || "";
+            date = parseExcelDate(firstCol, monthName, year);
+            dataOffset = 3;
+          } 
+          // Format standard: "05/01/2026;..."
+          else if (isValidFrenchDate(firstCol)) {
+            date = firstCol;
+            dataOffset = 1;
+          }
+          
+          if (!date || !isValidFrenchDate(date)) {
+            errorsCount++;
+            return;
+          }
+
+          const entry: DailyData = {
+            date,
+            nbEnfantsALSH: parseNumber(values[dataOffset] || ""),
+            nbEnfantsCantine: parseNumber(values[dataOffset + 1] || ""),
+            coutConventionnel: parseNumber(values[dataOffset + 2] || ""),
+            coutBio: parseNumber(values[dataOffset + 3] || ""),
+            coutSiqo: parseNumber(values[dataOffset + 4] || ""),
+            prixRevientMoyen: parseNumber(values[dataOffset + 5] || ""),
+            coutEauParEnfant: parseNumber(values[dataOffset + 6] || ""),
+            coutPainBioParEnfant: parseNumber(values[dataOffset + 7] || ""),
+            coutPainConvParEnfant: parseNumber(values[dataOffset + 8] || ""),
+            coutMatiereParEnfant: parseNumber(values[dataOffset + 9] || ""),
+            agentHeuresTravail: parseNumber(values[dataOffset + 10] || ""),
+            agentFraisPerso: parseNumber(values[dataOffset + 11] || ""),
+            coutPersonnelParEnfant: parseNumber(values[dataOffset + 12] || ""),
+            primairesReel: parseNumber(values[dataOffset + 13] || ""),
+            primaires7h: parseNumber(values[dataOffset + 14] || ""),
+            maternellesReel: parseNumber(values[dataOffset + 15] || ""),
+            maternelles7h: parseNumber(values[dataOffset + 16] || ""),
+            repasAdultes: parseNumber(values[dataOffset + 17] || ""),
+            mercredi: parseNumber(values[dataOffset + 18] || ""),
+            oMerveillesALSH: parseNumber(values[dataOffset + 19] || ""),
+            adulteOMerveillesALSH: parseNumber(values[dataOffset + 20] || ""),
+            dechetPrimaireNbEnfants: parseNumber(values[dataOffset + 21] || ""),
+            dechetPrimairePoids: parseNumber(values[dataOffset + 22] || ""),
+            dechetPrimaireParEnfant: parseNumber(values[dataOffset + 23] || ""),
+            dechetMaternelleNbEnfants: parseNumber(values[dataOffset + 24] || ""),
+            dechetMaternellePoids: parseNumber(values[dataOffset + 25] || ""),
+            dechetMaternelleParEnfant: parseNumber(values[dataOffset + 26] || ""),
+          };
+
+          importedData.push(entry);
+        });
+
+        if (importedData.length === 0) {
+          toast.error("Aucune donnée valide trouvée dans le fichier Excel");
+          return;
+        }
+
+        if (onImport) {
+          onImport(importedData);
+          toast.success(`${importedData.length} entrée(s) importée(s) avec succès${errorsCount > 0 ? ` (${errorsCount} ligne(s) ignorée(s))` : ""}`);
+        }
+      } catch (error) {
+        console.error("Erreur lors de l'import Excel:", error);
+        toast.error("Erreur lors de la lecture du fichier Excel");
+      }
+    };
+    reader.readAsArrayBuffer(file);
+  };
+
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      importFromCSV(file);
+      const extension = file.name.split('.').pop()?.toLowerCase();
+      if (extension === 'xlsx' || extension === 'xls') {
+        importFromExcel(file);
+      } else {
+        importFromCSV(file);
+      }
       // Réinitialiser l'input pour permettre de réimporter le même fichier
       event.target.value = "";
     }
@@ -287,7 +401,7 @@ const DataTable = ({ data, onAdd, onUpdate, onDelete, onImport }: DataTableProps
             type="file"
             ref={fileInputRef}
             onChange={handleFileSelect}
-            accept=".csv"
+            accept=".csv,.xlsx,.xls"
             className="hidden"
           />
           <Button 
@@ -296,7 +410,7 @@ const DataTable = ({ data, onAdd, onUpdate, onDelete, onImport }: DataTableProps
             onClick={() => fileInputRef.current?.click()}
           >
             <Upload className="h-4 w-4 mr-2" />
-            Importer CSV
+            Importer
           </Button>
           <Button 
             variant="outline" 
