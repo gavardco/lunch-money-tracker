@@ -148,21 +148,21 @@ const DataTable = ({ data, onAdd, onUpdate, onDelete, onImport }: DataTableProps
           let dataOffset = 0;
 
           const firstCol = values[0]?.trim() || "";
-          
-          // Format Excel: "05-janv;Janvier;2026;..."
-          if (firstCol.includes("-") && !firstCol.includes("/")) {
-            date = parseImportedDate(firstCol, values[1]?.trim() || "", values[2]?.trim() || "");
-            dataOffset = 3; // Les données commencent à l'index 3
-          } 
-          // Format standard: "05/01/2026;..." ou date texte Excel
-          else {
+          const secondCol = values[1]?.trim() || "";
+          const thirdCol = values[2]?.trim() || "";
+
+          // Si col B = nom de mois et col C = année => format avec 3 colonnes de date
+          if (isMonthName(secondCol) && isYearLike(thirdCol)) {
+            date = parseImportedDate(firstCol, secondCol, thirdCol);
+            dataOffset = 3;
+          } else if (firstCol.includes("-") && !firstCol.includes("/")) {
+            date = parseImportedDate(firstCol, secondCol, thirdCol);
+            dataOffset = 3;
+          } else {
             date = parseImportedDate(firstCol);
-            dataOffset = 1; // Les données commencent à l'index 1
+            dataOffset = 1;
           }
-          
-          // Valider la date
-          if (!date || !isValidFrenchDate(date)) {
-            errorsCount++;
+
             return;
           }
 
