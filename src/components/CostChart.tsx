@@ -1,6 +1,6 @@
 import { MonthlyData } from "@/utils/dataAggregation";
 import {
-  AreaChart,
+  ComposedChart,
   Area,
   Line,
   XAxis,
