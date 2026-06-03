@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useState, useMemo } from "react";
 import { DailyData, formatDateToFrench, isValidFrenchDate } from "@/types/cantine";
 import * as XLSX from "xlsx";
 import {
@@ -23,9 +23,12 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Trash2, Plus, Download, Upload } from "lucide-react";
+import { Trash2, Plus, Download, Upload, Save } from "lucide-react";
 import DataForm from "./DataForm";
 import { toast } from "sonner";
+import { cn } from "@/lib/utils";
+
+type NumericField = Exclude<keyof DailyData, "date">;
 
 interface DataTableProps {
   data: DailyData[];
@@ -37,6 +40,61 @@ interface DataTableProps {
 
 const DataTable = ({ data, onAdd, onUpdate, onDelete, onImport }: DataTableProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [edits, setEdits] = useState<Record<string, Partial<Record<NumericField, string>>>>({});
+  const [saving, setSaving] = useState(false);
+
+  const pendingCount = useMemo(
+    () => Object.values(edits).reduce((acc, e) => acc + Object.keys(e).length, 0),
+    [edits]
+  );
+
+  const getCellValue = (row: DailyData, field: NumericField): string => {
+    const pending = edits[row.date]?.[field];
+    if (pending !== undefined) return pending;
+    const v = row[field] as number | null | undefined;
+    return v == null ? "" : String(v).replace(".", ",");
+  };
+
+  const setCellValue = (date: string, field: NumericField, value: string) => {
+    setEdits((prev) => ({
+      ...prev,
+      [date]: { ...(prev[date] || {}), [field]: value },
+    }));
+  };
+
+  const parseCell = (value: string): number | null => {
+    const v = value.trim().replace(",", ".");
+    if (v === "") return null;
+    const n = parseFloat(v);
+    return isNaN(n) ? null : n;
+  };
+
+  const saveAllEdits = async () => {
+    if (pendingCount === 0) return;
+    setSaving(true);
+    try {
+      for (const row of data) {
+        const rowEdits = edits[row.date];
+        if (!rowEdits) continue;
+        const updated: DailyData = { ...row };
+        for (const [field, raw] of Object.entries(rowEdits)) {
+          (updated as any)[field] = parseCell(raw as string);
+        }
+        await onUpdate(row.date, updated);
+      }
+      setEdits({});
+      toast.success(`${pendingCount} modification(s) enregistrée(s)`);
+    } catch (err) {
+      console.error(err);
+      toast.error("Erreur lors de l'enregistrement");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const discardEdits = () => setEdits({});
+
+
 
   const parseNumber = (value: string): number | null => {
     if (!value || value.trim() === "") return null;
@@ -441,10 +499,17 @@ const DataTable = ({ data, onAdd, onUpdate, onDelete, onImport }: DataTableProps
 
   return (
     <div className="stat-card animate-slide-up overflow-hidden">
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold font-display">
-          Données journalières
-        </h3>
+      <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
+        <div className="flex items-center gap-3">
+          <h3 className="text-lg font-semibold font-display">
+            Données journalières
+          </h3>
+          {pendingCount > 0 && (
+            <Badge variant="outline" className="border-orange-500 text-orange-600">
+              {pendingCount} modif. non enregistrée(s)
+            </Badge>
+          )}
+        </div>
         <div className="flex items-center gap-2">
           <input
             type="file"
@@ -453,6 +518,25 @@ const DataTable = ({ data, onAdd, onUpdate, onDelete, onImport }: DataTableProps
             accept=".csv,.xlsx,.xls"
             className="hidden"
           />
+          {pendingCount > 0 && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={discardEdits}
+              disabled={saving}
+            >
+              Annuler
+            </Button>
+          )}
+          <Button
+            variant={pendingCount > 0 ? "default" : "outline"}
+            size="sm"
+            onClick={saveAllEdits}
+            disabled={pendingCount === 0 || saving}
+          >
+            <Save className="h-4 w-4 mr-2" />
+            {saving ? "Enregistrement..." : "Enregistrer"}
+          </Button>
           <Button 
             variant="outline" 
             size="sm" 
@@ -473,6 +557,7 @@ const DataTable = ({ data, onAdd, onUpdate, onDelete, onImport }: DataTableProps
           <DataForm mode="add" onSave={onAdd} />
         </div>
       </div>
+
       
       <ScrollArea className="h-[500px] w-full">
         <div className="min-w-[2000px]">
@@ -541,33 +626,53 @@ const DataTable = ({ data, onAdd, onUpdate, onDelete, onImport }: DataTableProps
                           {row.date}
                         </Badge>
                       </TableCell>
-                      <TableCell>{formatNumber(row.nbEnfantsALSH)}</TableCell>
-                      <TableCell>{formatNumber(row.nbEnfantsCantine)}</TableCell>
-                      <TableCell className="text-conventionnel font-medium">{formatCurrency(row.coutConventionnel)}</TableCell>
-                      <TableCell className="text-bio font-medium">{formatCurrency(row.coutBio)}</TableCell>
-                      <TableCell className="text-siqo font-medium">{formatCurrency(row.coutSiqo)}</TableCell>
-                      <TableCell className="font-semibold">{formatCurrency(row.prixRevientMoyen)}</TableCell>
-                      <TableCell>{formatCurrency(row.coutEauParEnfant)}</TableCell>
-                      <TableCell>{formatCurrency(row.coutPainBioParEnfant)}</TableCell>
-                      <TableCell>{formatCurrency(row.coutPainConvParEnfant)}</TableCell>
-                      <TableCell>{formatCurrency(row.coutMatiereParEnfant)}</TableCell>
-                      <TableCell>{formatNumber(row.agentHeuresTravail)}</TableCell>
-                      <TableCell>{formatCurrency(row.agentFraisPerso)}</TableCell>
-                      <TableCell>{formatCurrency(row.coutPersonnelParEnfant)}</TableCell>
-                      <TableCell>{formatNumber(row.primairesReel)}</TableCell>
-                      <TableCell>{formatNumber(row.primaires7h)}</TableCell>
-                      <TableCell>{formatNumber(row.maternellesReel)}</TableCell>
-                      <TableCell>{formatNumber(row.maternelles7h)}</TableCell>
-                      <TableCell>{formatNumber(row.repasAdultes)}</TableCell>
-                      <TableCell>{formatNumber(row.mercredi)}</TableCell>
-                      <TableCell>{formatNumber(row.oMerveillesALSH)}</TableCell>
-                      <TableCell>{formatNumber(row.adulteOMerveillesALSH)}</TableCell>
-                      <TableCell>{formatNumber(row.dechetPrimaireNbEnfants)}</TableCell>
-                      <TableCell>{formatDecimal(row.dechetPrimairePoids)} kg</TableCell>
-                      <TableCell>{formatDecimal(row.dechetPrimaireParEnfant)}</TableCell>
-                      <TableCell>{formatNumber(row.dechetMaternelleNbEnfants)}</TableCell>
-                      <TableCell>{formatDecimal(row.dechetMaternellePoids)} kg</TableCell>
-                      <TableCell>{formatDecimal(row.dechetMaternelleParEnfant)}</TableCell>
+                      {([
+                        ["nbEnfantsALSH", ""],
+                        ["nbEnfantsCantine", ""],
+                        ["coutConventionnel", "text-conventionnel font-medium"],
+                        ["coutBio", "text-bio font-medium"],
+                        ["coutSiqo", "text-siqo font-medium"],
+                        ["prixRevientMoyen", "font-semibold"],
+                        ["coutEauParEnfant", ""],
+                        ["coutPainBioParEnfant", ""],
+                        ["coutPainConvParEnfant", ""],
+                        ["coutMatiereParEnfant", ""],
+                        ["agentHeuresTravail", ""],
+                        ["agentFraisPerso", ""],
+                        ["coutPersonnelParEnfant", ""],
+                        ["primairesReel", ""],
+                        ["primaires7h", ""],
+                        ["maternellesReel", ""],
+                        ["maternelles7h", ""],
+                        ["repasAdultes", ""],
+                        ["mercredi", ""],
+                        ["oMerveillesALSH", ""],
+                        ["adulteOMerveillesALSH", ""],
+                        ["dechetPrimaireNbEnfants", ""],
+                        ["dechetPrimairePoids", ""],
+                        ["dechetPrimaireParEnfant", ""],
+                        ["dechetMaternelleNbEnfants", ""],
+                        ["dechetMaternellePoids", ""],
+                        ["dechetMaternelleParEnfant", ""],
+                      ] as [NumericField, string][]).map(([field, klass]) => {
+                        const isDirty = edits[row.date]?.[field] !== undefined;
+                        return (
+                          <TableCell key={field} className={cn("p-1", klass)}>
+                            <input
+                              type="text"
+                              inputMode="decimal"
+                              value={getCellValue(row, field)}
+                              onChange={(e) => setCellValue(row.date, field, e.target.value)}
+                              className={cn(
+                                "w-24 bg-transparent border border-transparent rounded px-2 py-1 text-sm",
+                                "hover:border-border focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary",
+                                isDirty && "border-orange-400 bg-orange-50 dark:bg-orange-950/30"
+                              )}
+                            />
+                          </TableCell>
+                        );
+                      })}
+
                       <TableCell className="sticky right-0 bg-card group-hover:bg-muted/30 z-10">
                         <div className="flex items-center justify-end gap-1">
                           <DataForm 
