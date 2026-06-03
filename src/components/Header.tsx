@@ -1,7 +1,22 @@
-import { UtensilsCrossed, Calendar, BarChart3 } from "lucide-react";
+import { UtensilsCrossed, Calendar, BarChart3, RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
-const Header = () => {
+interface HeaderProps {
+  onReset?: () => void;
+}
+
+const Header = ({ onReset }: HeaderProps) => {
   const currentMonth = new Date().toLocaleDateString("fr-FR", {
     month: "long",
     year: "numeric",
