@@ -1,3 +1,4 @@
+import { DailyData, parseFrenchDate } from "@/types/cantine";
 import { MonthlyData } from "@/utils/dataAggregation";
 import {
   BarChart,
@@ -12,14 +13,26 @@ import {
 
 interface AttendanceChartProps {
   monthlyData: MonthlyData[];
+  data: DailyData[];
 }
 
-const AttendanceChart = ({ monthlyData }: AttendanceChartProps) => {
+const AttendanceChart = ({ monthlyData, data }: AttendanceChartProps) => {
+  // ALSH = somme des colonnes "Mercredi" + "O Merv. ALSH" par mois (année scolaire)
+  const alshByMonth: Record<number, number> = {};
+  data.forEach((d) => {
+    const date = parseFrenchDate(d.date);
+    if (!date) return;
+    const m = date.getMonth();
+    const idx = m >= 8 ? m - 8 : m + 4;
+    if (idx < 0 || idx > 9) return;
+    alshByMonth[idx] = (alshByMonth[idx] || 0) + (d.mercredi || 0) + (d.oMerveillesALSH || 0);
+  });
+
   const chartData = monthlyData.map((d) => ({
     mois: d.month,
     Primaires: d.totalPrimaires,
     Maternelles: d.totalMaternelles,
-    ALSH: d.totalRepasMercredi + d.totalEnfantsALSH,
+    ALSH: alshByMonth[d.monthIndex] || 0,
   }));
 
   return (
