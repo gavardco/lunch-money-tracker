@@ -2,6 +2,7 @@ import { MonthlyData } from "@/utils/dataAggregation";
 import {
   AreaChart,
   Area,
+  Line,
   XAxis,
   YAxis,
   CartesianGrid,
