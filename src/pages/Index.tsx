@@ -14,7 +14,7 @@ import { useCanteenData } from "@/hooks/useCanteenData";
 import { aggregateByMonth } from "@/utils/dataAggregation";
 
 const Index = () => {
-  const { data, selectedMonth, addEntry, updateEntry, deleteEntry, importData } = useCanteenData();
+  const { data, selectedMonth, addEntry, updateEntry, deleteEntry, importData, resetToSample } = useCanteenData();
 
   const monthlyData = useMemo(() => {
     return aggregateByMonth(data, selectedMonth);
@@ -66,7 +66,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <Header />
+      <Header onReset={resetToSample} />
 
       <main className="container mx-auto px-4 py-8">
         {/* Stats Cards */}
