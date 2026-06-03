@@ -21,6 +21,7 @@ const CostChart = ({ monthlyData }: CostChartProps) => {
     Bio: d.totalCoutBio,
     Conventionnel: d.totalCoutConventionnel,
     SIQO: d.totalCoutSiqo,
+    Total: d.totalCoutBio + d.totalCoutConventionnel + d.totalCoutSiqo,
   }));
 
   return (
