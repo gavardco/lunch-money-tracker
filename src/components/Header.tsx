@@ -54,6 +54,33 @@ const Header = ({ onReset }: HeaderProps) => {
               <BarChart3 className="h-4 w-4 mr-2" />
               Rapports
             </Button>
+            {onReset && (
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button
+                    variant="secondary"
+                    className="bg-primary-foreground/20 hover:bg-primary-foreground/30 text-primary-foreground border-0"
+                  >
+                    <RotateCcw className="h-4 w-4 mr-2" />
+                    Réinitialiser
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Réinitialiser toutes les données ?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Cette action supprimera définitivement toutes les données du tableau. Cette action est irréversible.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Annuler</AlertDialogCancel>
+                    <AlertDialogAction onClick={onReset} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                      Réinitialiser
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            )}
           </div>
         </div>
       </div>
