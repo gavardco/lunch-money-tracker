@@ -259,17 +259,20 @@ const DataTable = ({ data, onAdd, onUpdate, onDelete, onImport }: DataTableProps
           let dataOffset = 0;
 
           const firstCol = values[0]?.trim() || "";
-          
-          // Format Excel: "05-janv;Janvier;2026;..."
-          if (firstCol.includes("-") && !firstCol.includes("/")) {
-            date = parseImportedDate(firstCol, values[1]?.trim() || "", values[2]?.trim() || "");
+          const secondCol = values[1]?.trim() || "";
+          const thirdCol = values[2]?.trim() || "";
+
+          if (isMonthName(secondCol) && isYearLike(thirdCol)) {
+            date = parseImportedDate(firstCol, secondCol, thirdCol);
             dataOffset = 3;
-          } 
-          // Format standard: "05/01/2026;..." ou date texte Excel
-          else {
+          } else if (firstCol.includes("-") && !firstCol.includes("/")) {
+            date = parseImportedDate(firstCol, secondCol, thirdCol);
+            dataOffset = 3;
+          } else {
             date = parseImportedDate(firstCol);
             dataOffset = 1;
           }
+
           
           if (!date || !isValidFrenchDate(date)) {
             errorsCount++;
