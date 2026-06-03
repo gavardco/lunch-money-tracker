@@ -76,6 +76,15 @@ const DataTable = ({ data, onAdd, onUpdate, onDelete, onImport }: DataTableProps
     return `${day}/${month}/${yearNum}`;
   };
 
+  const MONTH_NAMES = new Set([
+    "janvier","janv","février","fevrier","févr","fevr","mars","avril","avr",
+    "mai","juin","juillet","juil","août","aout","septembre","sept","octobre",
+    "oct","novembre","nov","décembre","decembre","dec"
+  ]);
+
+  const isMonthName = (v: string) => MONTH_NAMES.has(v.toLowerCase().trim());
+  const isYearLike = (v: string) => /^(19|20)\d{2}$/.test(v.trim());
+
   const parseImportedDate = (rawValue: string, monthName?: string, year?: string): string | null => {
     const value = rawValue.trim();
 
@@ -92,6 +101,17 @@ const DataTable = ({ data, onAdd, onUpdate, onDelete, onImport }: DataTableProps
       }
     }
 
+    // Format US "1/1/26" ou "01/01/2026" => essayer DD/MM/YYYY puis MM/DD/YYYY
+    const slashMatch = value.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})$/);
+    if (slashMatch) {
+      let [, a, b, y] = slashMatch;
+      if (y.length === 2) y = (parseInt(y) > 50 ? "19" : "20") + y;
+      const dd = a.padStart(2, "0");
+      const mm = b.padStart(2, "0");
+      const candidate = `${dd}/${mm}/${y}`;
+      if (isValidFrenchDate(candidate)) return candidate;
+    }
+
     const parsedDate = new Date(value);
     if (!Number.isNaN(parsedDate.getTime())) {
       return formatDateToFrench(parsedDate);
@@ -99,6 +119,7 @@ const DataTable = ({ data, onAdd, onUpdate, onDelete, onImport }: DataTableProps
 
     return null;
   };
+
 
   const importFromCSV = (file: File) => {
     const reader = new FileReader();
