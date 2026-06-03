@@ -499,10 +499,17 @@ const DataTable = ({ data, onAdd, onUpdate, onDelete, onImport }: DataTableProps
 
   return (
     <div className="stat-card animate-slide-up overflow-hidden">
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold font-display">
-          Données journalières
-        </h3>
+      <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
+        <div className="flex items-center gap-3">
+          <h3 className="text-lg font-semibold font-display">
+            Données journalières
+          </h3>
+          {pendingCount > 0 && (
+            <Badge variant="outline" className="border-orange-500 text-orange-600">
+              {pendingCount} modif. non enregistrée(s)
+            </Badge>
+          )}
+        </div>
         <div className="flex items-center gap-2">
           <input
             type="file"
@@ -511,6 +518,25 @@ const DataTable = ({ data, onAdd, onUpdate, onDelete, onImport }: DataTableProps
             accept=".csv,.xlsx,.xls"
             className="hidden"
           />
+          {pendingCount > 0 && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={discardEdits}
+              disabled={saving}
+            >
+              Annuler
+            </Button>
+          )}
+          <Button
+            variant={pendingCount > 0 ? "default" : "outline"}
+            size="sm"
+            onClick={saveAllEdits}
+            disabled={pendingCount === 0 || saving}
+          >
+            <Save className="h-4 w-4 mr-2" />
+            {saving ? "Enregistrement..." : "Enregistrer"}
+          </Button>
           <Button 
             variant="outline" 
             size="sm" 
@@ -531,6 +557,7 @@ const DataTable = ({ data, onAdd, onUpdate, onDelete, onImport }: DataTableProps
           <DataForm mode="add" onSave={onAdd} />
         </div>
       </div>
+
       
       <ScrollArea className="h-[500px] w-full">
         <div className="min-w-[2000px]">
