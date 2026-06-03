@@ -19,7 +19,7 @@ const AttendanceChart = ({ monthlyData }: AttendanceChartProps) => {
     mois: d.month,
     Primaires: d.totalPrimaires,
     Maternelles: d.totalMaternelles,
-    ALSH: d.totalEnfantsALSH,
+    ALSH: d.totalRepasMercredi + d.totalEnfantsALSH,
   }));
 
   return (
