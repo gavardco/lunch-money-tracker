@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import { DailyData, isValidFrenchDate } from "@/types/cantine";
+import { DailyData, formatDateToFrench, isValidFrenchDate } from "@/types/cantine";
 import * as XLSX from "xlsx";
 import {
   Table,
@@ -32,7 +32,7 @@ interface DataTableProps {
   onAdd: (data: DailyData) => void;
   onUpdate: (date: string, data: DailyData) => void;
   onDelete: (date: string) => void;
-  onImport?: (data: DailyData[]) => void;
+  onImport?: (data: DailyData[]) => Promise<boolean> | boolean;
 }
 
 const DataTable = ({ data, onAdd, onUpdate, onDelete, onImport }: DataTableProps) => {
@@ -76,9 +76,33 @@ const DataTable = ({ data, onAdd, onUpdate, onDelete, onImport }: DataTableProps
     return `${day}/${month}/${yearNum}`;
   };
 
+  const parseImportedDate = (rawValue: string, monthName?: string, year?: string): string | null => {
+    const value = rawValue.trim();
+
+    if (!value) return null;
+
+    if (isValidFrenchDate(value)) {
+      return value;
+    }
+
+    if (value.includes("-") && !value.includes("/") && monthName && year) {
+      const excelDate = parseExcelDate(value, monthName, year);
+      if (excelDate && isValidFrenchDate(excelDate)) {
+        return excelDate;
+      }
+    }
+
+    const parsedDate = new Date(value);
+    if (!Number.isNaN(parsedDate.getTime())) {
+      return formatDateToFrench(parsedDate);
+    }
+
+    return null;
+  };
+
   const importFromCSV = (file: File) => {
     const reader = new FileReader();
-    reader.onload = (e) => {
+    reader.onload = async (e) => {
       try {
         const text = e.target?.result as string;
         const lines = text.split(/\r?\n/).filter((line) => line.trim() !== "");
@@ -106,14 +130,12 @@ const DataTable = ({ data, onAdd, onUpdate, onDelete, onImport }: DataTableProps
           
           // Format Excel: "05-janv;Janvier;2026;..."
           if (firstCol.includes("-") && !firstCol.includes("/")) {
-            const monthName = values[1]?.trim() || "";
-            const year = values[2]?.trim() || "";
-            date = parseExcelDate(firstCol, monthName, year);
+            date = parseImportedDate(firstCol, values[1]?.trim() || "", values[2]?.trim() || "");
             dataOffset = 3; // Les données commencent à l'index 3
           } 
-          // Format standard: "05/01/2026;..."
-          else if (isValidFrenchDate(firstCol)) {
-            date = firstCol;
+          // Format standard: "05/01/2026;..." ou date texte Excel
+          else {
+            date = parseImportedDate(firstCol);
             dataOffset = 1; // Les données commencent à l'index 1
           }
           
@@ -163,7 +185,8 @@ const DataTable = ({ data, onAdd, onUpdate, onDelete, onImport }: DataTableProps
         }
 
         if (onImport) {
-          onImport(importedData);
+          const importSucceeded = await onImport(importedData);
+          if (importSucceeded === false) return;
           toast.success(`${importedData.length} entrée(s) importée(s) avec succès${errorsCount > 0 ? ` (${errorsCount} ligne(s) ignorée(s))` : ""}`);
         }
       } catch (error) {
@@ -176,7 +199,7 @@ const DataTable = ({ data, onAdd, onUpdate, onDelete, onImport }: DataTableProps
 
   const importFromExcel = (file: File) => {
     const reader = new FileReader();
-    reader.onload = (e) => {
+    reader.onload = async (e) => {
       try {
         const data = new Uint8Array(e.target?.result as ArrayBuffer);
         const workbook = XLSX.read(data, { type: "array" });
@@ -215,14 +238,12 @@ const DataTable = ({ data, onAdd, onUpdate, onDelete, onImport }: DataTableProps
           
           // Format Excel: "05-janv;Janvier;2026;..."
           if (firstCol.includes("-") && !firstCol.includes("/")) {
-            const monthName = values[1]?.trim() || "";
-            const year = values[2]?.trim() || "";
-            date = parseExcelDate(firstCol, monthName, year);
+            date = parseImportedDate(firstCol, values[1]?.trim() || "", values[2]?.trim() || "");
             dataOffset = 3;
           } 
-          // Format standard: "05/01/2026;..."
-          else if (isValidFrenchDate(firstCol)) {
-            date = firstCol;
+          // Format standard: "05/01/2026;..." ou date texte Excel
+          else {
+            date = parseImportedDate(firstCol);
             dataOffset = 1;
           }
           
@@ -271,7 +292,8 @@ const DataTable = ({ data, onAdd, onUpdate, onDelete, onImport }: DataTableProps
         }
 
         if (onImport) {
-          onImport(importedData);
+          const importSucceeded = await onImport(importedData);
+          if (importSucceeded === false) return;
           toast.success(`${importedData.length} entrée(s) importée(s) avec succès${errorsCount > 0 ? ` (${errorsCount} ligne(s) ignorée(s))` : ""}`);
         }
       } catch (error) {

@@ -188,14 +188,15 @@ export const useCanteenData = () => {
       if (error) {
         console.error("Erreur import:", error);
         toast.error("Erreur lors de l'import");
-        return;
+        return false;
       }
 
-      toast.success(`${importedData.length} entrées importées`);
-      fetchData();
+      await fetchData();
+      return true;
     } catch (err) {
       console.error("Erreur inattendue:", err);
       toast.error("Erreur inattendue");
+      return false;
     }
   }, [fetchData]);
 
