@@ -1,4 +1,5 @@
 import { DailyData, parseFrenchDate } from "@/types/cantine";
+import { isSchoolHoliday, isWednesday } from "@/utils/frenchHolidays";
 
 export interface MonthlyData {
   month: string;
@@ -85,7 +86,8 @@ export const aggregateByMonth = (data: DailyData[], selectedMonth: string): Mont
     if (schoolYearIndex < 0 || schoolYearIndex > 9) return;
 
     const isCantine = d.nbEnfantsCantine !== null;
-    const isALSH = d.nbEnfantsALSH !== null;
+    const duringHolidays = isSchoolHoliday(date);
+    const wednesdayOutsideHolidays = isWednesday(date) && !duringHolidays;
 
     monthlyTotals[schoolYearIndex].totalCoutBio += d.coutBio || 0;
     monthlyTotals[schoolYearIndex].totalCoutConventionnel += d.coutConventionnel || 0;
@@ -99,17 +101,18 @@ export const aggregateByMonth = (data: DailyData[], selectedMonth: string): Mont
     monthlyTotals[schoolYearIndex].totalDechetsMaternelles += d.dechetMaternellePoids || 0;
     monthlyTotals[schoolYearIndex].totalHeuresAgent += d.agentHeuresTravail || 0;
     monthlyTotals[schoolYearIndex].totalFraisPersonnel += d.agentFraisPerso || 0;
-    
+
     if (isCantine) {
       monthlyTotals[schoolYearIndex].heuresAgentCantine += d.agentHeuresTravail || 0;
       monthlyTotals[schoolYearIndex].fraisPersonnelCantine += d.agentFraisPerso || 0;
     }
-    if (isALSH) {
+    // ALSH = uniquement pendant les vacances scolaires (mercredis de vacances inclus)
+    if (duringHolidays) {
       monthlyTotals[schoolYearIndex].heuresAgentALSH += d.agentHeuresTravail || 0;
       monthlyTotals[schoolYearIndex].fraisPersonnelALSH += d.agentFraisPerso || 0;
     }
-    // Heures agent pour les mercredis (basé sur le nombre de repas mercredi)
-    if (d.mercredi && d.mercredi > 0) {
+    // Mercredi = uniquement mercredis hors vacances scolaires
+    if (wednesdayOutsideHolidays) {
       monthlyTotals[schoolYearIndex].heuresAgentMercredi += d.agentHeuresTravail || 0;
       monthlyTotals[schoolYearIndex].fraisPersonnelMercredi += d.agentFraisPerso || 0;
     }
