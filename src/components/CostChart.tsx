@@ -31,7 +31,7 @@ const CostChart = ({ monthlyData }: CostChartProps) => {
       </h3>
       <div className="h-[300px]">
         <ResponsiveContainer width="100%" height="100%">
-          <AreaChart data={chartData}>
+          <ComposedChart data={chartData}>
             <defs>
               <linearGradient id="colorBio" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="5%" stopColor="hsl(142, 70%, 45%)" stopOpacity={0.3} />
