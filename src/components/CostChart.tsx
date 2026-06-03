@@ -97,7 +97,7 @@ const CostChart = ({ monthlyData }: CostChartProps) => {
               dot={{ r: 4, fill: "hsl(0, 84%, 60%)" }}
               activeDot={{ r: 6 }}
             />
-          </AreaChart>
+          </ComposedChart>
         </ResponsiveContainer>
       </div>
     </div>
