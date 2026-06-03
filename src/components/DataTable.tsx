@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useState, useMemo } from "react";
 import { DailyData, formatDateToFrench, isValidFrenchDate } from "@/types/cantine";
 import * as XLSX from "xlsx";
 import {
@@ -23,9 +23,12 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Trash2, Plus, Download, Upload } from "lucide-react";
+import { Trash2, Plus, Download, Upload, Save } from "lucide-react";
 import DataForm from "./DataForm";
 import { toast } from "sonner";
+import { cn } from "@/lib/utils";
+
+type NumericField = Exclude<keyof DailyData, "date">;
 
 interface DataTableProps {
   data: DailyData[];
@@ -37,6 +40,61 @@ interface DataTableProps {
 
 const DataTable = ({ data, onAdd, onUpdate, onDelete, onImport }: DataTableProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [edits, setEdits] = useState<Record<string, Partial<Record<NumericField, string>>>>({});
+  const [saving, setSaving] = useState(false);
+
+  const pendingCount = useMemo(
+    () => Object.values(edits).reduce((acc, e) => acc + Object.keys(e).length, 0),
+    [edits]
+  );
+
+  const getCellValue = (row: DailyData, field: NumericField): string => {
+    const pending = edits[row.date]?.[field];
+    if (pending !== undefined) return pending;
+    const v = row[field] as number | null | undefined;
+    return v == null ? "" : String(v).replace(".", ",");
+  };
+
+  const setCellValue = (date: string, field: NumericField, value: string) => {
+    setEdits((prev) => ({
+      ...prev,
+      [date]: { ...(prev[date] || {}), [field]: value },
+    }));
+  };
+
+  const parseCell = (value: string): number | null => {
+    const v = value.trim().replace(",", ".");
+    if (v === "") return null;
+    const n = parseFloat(v);
+    return isNaN(n) ? null : n;
+  };
+
+  const saveAllEdits = async () => {
+    if (pendingCount === 0) return;
+    setSaving(true);
+    try {
+      for (const row of data) {
+        const rowEdits = edits[row.date];
+        if (!rowEdits) continue;
+        const updated: DailyData = { ...row };
+        for (const [field, raw] of Object.entries(rowEdits)) {
+          (updated as any)[field] = parseCell(raw as string);
+        }
+        await onUpdate(row.date, updated);
+      }
+      setEdits({});
+      toast.success(`${pendingCount} modification(s) enregistrée(s)`);
+    } catch (err) {
+      console.error(err);
+      toast.error("Erreur lors de l'enregistrement");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const discardEdits = () => setEdits({});
+
+
 
   const parseNumber = (value: string): number | null => {
     if (!value || value.trim() === "") return null;
