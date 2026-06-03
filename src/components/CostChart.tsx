@@ -89,6 +89,14 @@ const CostChart = ({ monthlyData }: CostChartProps) => {
               fillOpacity={1}
               fill="url(#colorSiqo)"
             />
+            <Line
+              type="monotone"
+              dataKey="Total"
+              stroke="hsl(0, 84%, 60%)"
+              strokeWidth={3}
+              dot={{ r: 4, fill: "hsl(0, 84%, 60%)" }}
+              activeDot={{ r: 6 }}
+            />
           </AreaChart>
         </ResponsiveContainer>
       </div>
