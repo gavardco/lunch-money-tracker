@@ -163,8 +163,11 @@ const DataTable = ({ data, onAdd, onUpdate, onDelete, onImport }: DataTableProps
             dataOffset = 1;
           }
 
+          if (!date || !isValidFrenchDate(date)) {
+            errorsCount++;
             return;
           }
+
 
           const entry: DailyData = {
             date,
