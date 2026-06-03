@@ -92,9 +92,20 @@ export const aggregateByMonth = (data: DailyData[], selectedMonth: string): Mont
     monthlyTotals[schoolYearIndex].totalCoutBio += d.coutBio || 0;
     monthlyTotals[schoolYearIndex].totalCoutConventionnel += d.coutConventionnel || 0;
     monthlyTotals[schoolYearIndex].totalCoutSiqo += d.coutSiqo || 0;
-    monthlyTotals[schoolYearIndex].totalEnfantsCantine += d.nbEnfantsCantine || 0;
-    monthlyTotals[schoolYearIndex].totalEnfantsALSH += d.nbEnfantsALSH || 0;
-    monthlyTotals[schoolYearIndex].totalRepasMercredi += d.mercredi || 0;
+
+    // Reclassification des repas selon le calendrier scolaire
+    const repasJour =
+      (d.nbEnfantsCantine || 0) + (d.nbEnfantsALSH || 0) + (d.mercredi || 0);
+    if (duringHolidays) {
+      // Vacances scolaires (mercredis de vacances inclus) → ALSH
+      monthlyTotals[schoolYearIndex].totalEnfantsALSH += repasJour;
+    } else if (wednesdayOutsideHolidays) {
+      // Mercredi hors vacances → Mercredi
+      monthlyTotals[schoolYearIndex].totalRepasMercredi += repasJour;
+    } else {
+      // Jour d'école classique → Cantine
+      monthlyTotals[schoolYearIndex].totalEnfantsCantine += repasJour;
+    }
     monthlyTotals[schoolYearIndex].totalPrimaires += d.primairesReel || 0;
     monthlyTotals[schoolYearIndex].totalMaternelles += d.maternellesReel || 0;
     monthlyTotals[schoolYearIndex].totalDechetsPrimaires += d.dechetPrimairePoids || 0;
