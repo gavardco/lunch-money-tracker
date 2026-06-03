@@ -113,7 +113,7 @@ const Index = () => {
 
         {/* Charts Row 2 - Fréquentation et Déchets */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-          <AttendanceChart monthlyData={monthlyData} />
+          <AttendanceChart monthlyData={monthlyData} data={data} />
           <WasteChart monthlyData={monthlyData} />
         </div>
 
