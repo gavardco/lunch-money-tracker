@@ -1,4 +1,5 @@
 import { DailyData, parseFrenchDate } from "@/types/cantine";
+import { isSchoolHoliday, isWednesday } from "@/utils/frenchHolidays";
 
 export interface MonthlyData {
   month: string;
