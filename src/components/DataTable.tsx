@@ -626,33 +626,53 @@ const DataTable = ({ data, onAdd, onUpdate, onDelete, onImport }: DataTableProps
                           {row.date}
                         </Badge>
                       </TableCell>
-                      <TableCell>{formatNumber(row.nbEnfantsALSH)}</TableCell>
-                      <TableCell>{formatNumber(row.nbEnfantsCantine)}</TableCell>
-                      <TableCell className="text-conventionnel font-medium">{formatCurrency(row.coutConventionnel)}</TableCell>
-                      <TableCell className="text-bio font-medium">{formatCurrency(row.coutBio)}</TableCell>
-                      <TableCell className="text-siqo font-medium">{formatCurrency(row.coutSiqo)}</TableCell>
-                      <TableCell className="font-semibold">{formatCurrency(row.prixRevientMoyen)}</TableCell>
-                      <TableCell>{formatCurrency(row.coutEauParEnfant)}</TableCell>
-                      <TableCell>{formatCurrency(row.coutPainBioParEnfant)}</TableCell>
-                      <TableCell>{formatCurrency(row.coutPainConvParEnfant)}</TableCell>
-                      <TableCell>{formatCurrency(row.coutMatiereParEnfant)}</TableCell>
-                      <TableCell>{formatNumber(row.agentHeuresTravail)}</TableCell>
-                      <TableCell>{formatCurrency(row.agentFraisPerso)}</TableCell>
-                      <TableCell>{formatCurrency(row.coutPersonnelParEnfant)}</TableCell>
-                      <TableCell>{formatNumber(row.primairesReel)}</TableCell>
-                      <TableCell>{formatNumber(row.primaires7h)}</TableCell>
-                      <TableCell>{formatNumber(row.maternellesReel)}</TableCell>
-                      <TableCell>{formatNumber(row.maternelles7h)}</TableCell>
-                      <TableCell>{formatNumber(row.repasAdultes)}</TableCell>
-                      <TableCell>{formatNumber(row.mercredi)}</TableCell>
-                      <TableCell>{formatNumber(row.oMerveillesALSH)}</TableCell>
-                      <TableCell>{formatNumber(row.adulteOMerveillesALSH)}</TableCell>
-                      <TableCell>{formatNumber(row.dechetPrimaireNbEnfants)}</TableCell>
-                      <TableCell>{formatDecimal(row.dechetPrimairePoids)} kg</TableCell>
-                      <TableCell>{formatDecimal(row.dechetPrimaireParEnfant)}</TableCell>
-                      <TableCell>{formatNumber(row.dechetMaternelleNbEnfants)}</TableCell>
-                      <TableCell>{formatDecimal(row.dechetMaternellePoids)} kg</TableCell>
-                      <TableCell>{formatDecimal(row.dechetMaternelleParEnfant)}</TableCell>
+                      {([
+                        ["nbEnfantsALSH", ""],
+                        ["nbEnfantsCantine", ""],
+                        ["coutConventionnel", "text-conventionnel font-medium"],
+                        ["coutBio", "text-bio font-medium"],
+                        ["coutSiqo", "text-siqo font-medium"],
+                        ["prixRevientMoyen", "font-semibold"],
+                        ["coutEauParEnfant", ""],
+                        ["coutPainBioParEnfant", ""],
+                        ["coutPainConvParEnfant", ""],
+                        ["coutMatiereParEnfant", ""],
+                        ["agentHeuresTravail", ""],
+                        ["agentFraisPerso", ""],
+                        ["coutPersonnelParEnfant", ""],
+                        ["primairesReel", ""],
+                        ["primaires7h", ""],
+                        ["maternellesReel", ""],
+                        ["maternelles7h", ""],
+                        ["repasAdultes", ""],
+                        ["mercredi", ""],
+                        ["oMerveillesALSH", ""],
+                        ["adulteOMerveillesALSH", ""],
+                        ["dechetPrimaireNbEnfants", ""],
+                        ["dechetPrimairePoids", ""],
+                        ["dechetPrimaireParEnfant", ""],
+                        ["dechetMaternelleNbEnfants", ""],
+                        ["dechetMaternellePoids", ""],
+                        ["dechetMaternelleParEnfant", ""],
+                      ] as [NumericField, string][]).map(([field, klass]) => {
+                        const isDirty = edits[row.date]?.[field] !== undefined;
+                        return (
+                          <TableCell key={field} className={cn("p-1", klass)}>
+                            <input
+                              type="text"
+                              inputMode="decimal"
+                              value={getCellValue(row, field)}
+                              onChange={(e) => setCellValue(row.date, field, e.target.value)}
+                              className={cn(
+                                "w-24 bg-transparent border border-transparent rounded px-2 py-1 text-sm",
+                                "hover:border-border focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary",
+                                isDirty && "border-orange-400 bg-orange-50 dark:bg-orange-950/30"
+                              )}
+                            />
+                          </TableCell>
+                        );
+                      })}
+
                       <TableCell className="sticky right-0 bg-card group-hover:bg-muted/30 z-10">
                         <div className="flex items-center justify-end gap-1">
                           <DataForm 
