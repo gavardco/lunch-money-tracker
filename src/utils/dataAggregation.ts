@@ -126,8 +126,9 @@ export const aggregateByMonth = (data: DailyData[], selectedMonth: string): Mont
     }
   });
 
-  // Générer les données pour tous les mois
-  return monthNames.map((name, index) => ({
+  // Générer les données uniquement pour la période janvier → septembre 2026
+  // (octobre est incomplet, novembre/décembre sans données)
+  return monthNames.slice(0, 9).map((name, index) => ({
     month: name,
     monthIndex: index,
     ...monthlyTotals[index],
