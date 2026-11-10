@@ -25,7 +25,7 @@ export interface MonthlyData {
 }
 
 const monthNames = [
-  'Sept', 'Oct', 'Nov', 'Déc', 'Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin'
+  'Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sept', 'Oct', 'Nov', 'Déc'
 ];
 
 export const aggregateByMonth = (data: DailyData[], selectedMonth: string): MonthlyData[] => {
@@ -51,8 +51,8 @@ export const aggregateByMonth = (data: DailyData[], selectedMonth: string): Mont
     fraisPersonnelMercredi: number;
   }> = {};
 
-  // Initialiser tous les mois de l'année scolaire
-  for (let i = 0; i < 10; i++) {
+  // Initialiser tous les mois de l'année civile
+  for (let i = 0; i < 12; i++) {
     monthlyTotals[i] = {
       totalCoutBio: 0,
       totalCoutConventionnel: 0,
@@ -80,10 +80,8 @@ export const aggregateByMonth = (data: DailyData[], selectedMonth: string): Mont
     const date = parseFrenchDate(d.date);
     if (!date) return;
 
-    const month = date.getMonth(); // 0-11
-    // Convertir en index d'année scolaire (Sept=0, Oct=1, ..., Juin=9)
-    let schoolYearIndex = month >= 8 ? month - 8 : month + 4;
-    if (schoolYearIndex < 0 || schoolYearIndex > 9) return;
+    // Index d'année civile (Jan=0, ..., Déc=11)
+    const schoolYearIndex = date.getMonth();
 
     const isCantine = d.nbEnfantsCantine !== null;
     const duringHolidays = isSchoolHoliday(date);

@@ -30,7 +30,7 @@ const AgentHoursChart = ({ monthlyData }: AgentHoursChartProps) => {
   return (
     <div className="stat-card animate-slide-up">
       <h3 className="text-lg font-semibold font-display mb-2">
-        Heures agent annuelles
+        Heures agent annuelles (année civile)
       </h3>
       <div className="flex gap-4 mb-4 text-sm flex-wrap">
         <span className="text-muted-foreground">

@@ -22,9 +22,7 @@ const AttendanceChart = ({ monthlyData, data }: AttendanceChartProps) => {
   data.forEach((d) => {
     const date = parseFrenchDate(d.date);
     if (!date) return;
-    const m = date.getMonth();
-    const idx = m >= 8 ? m - 8 : m + 4;
-    if (idx < 0 || idx > 9) return;
+    const idx = date.getMonth();
     alshByMonth[idx] = (alshByMonth[idx] || 0) + (d.mercredi || 0) + (d.oMerveillesALSH || 0);
   });
 
