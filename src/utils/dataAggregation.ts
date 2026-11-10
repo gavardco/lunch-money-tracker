@@ -22,12 +22,6 @@ export interface MonthlyData {
   fraisPersonnelCantine: number;
   fraisPersonnelALSH: number;
   fraisPersonnelMercredi: number;
-  sommeCoutMatiereParEnfant: number;
-  nbJoursCoutMatiere: number;
-  sommeCoutPersonnelParEnfant: number;
-  nbJoursCoutPersonnel: number;
-  coutMatiereParEnfant: number;
-  coutPersonnelParEnfant: number;
 }
 
 const monthNames = [
@@ -55,10 +49,6 @@ export const aggregateByMonth = (data: DailyData[], selectedMonth: string): Mont
     fraisPersonnelCantine: number;
     fraisPersonnelALSH: number;
     fraisPersonnelMercredi: number;
-    sommeCoutMatiereParEnfant: number;
-    nbJoursCoutMatiere: number;
-    sommeCoutPersonnelParEnfant: number;
-    nbJoursCoutPersonnel: number;
   }> = {};
 
   // Initialiser tous les mois de l'année civile
@@ -82,10 +72,6 @@ export const aggregateByMonth = (data: DailyData[], selectedMonth: string): Mont
       fraisPersonnelCantine: 0,
       fraisPersonnelALSH: 0,
       fraisPersonnelMercredi: 0,
-      sommeCoutMatiereParEnfant: 0,
-      nbJoursCoutMatiere: 0,
-      sommeCoutPersonnelParEnfant: 0,
-      nbJoursCoutPersonnel: 0,
     };
   }
 
@@ -124,16 +110,6 @@ export const aggregateByMonth = (data: DailyData[], selectedMonth: string): Mont
     monthlyTotals[schoolYearIndex].totalHeuresAgent += d.agentHeuresTravail || 0;
     monthlyTotals[schoolYearIndex].totalFraisPersonnel += d.agentFraisPerso || 0;
 
-    // Moyenne des colonnes "Coût MAT./ENFANT" et "Coût PERS./ENFANT" (jours renseignés)
-    if (d.coutMatiereParEnfant !== null && d.coutMatiereParEnfant !== undefined) {
-      monthlyTotals[schoolYearIndex].sommeCoutMatiereParEnfant += d.coutMatiereParEnfant;
-      monthlyTotals[schoolYearIndex].nbJoursCoutMatiere += 1;
-    }
-    if (d.coutPersonnelParEnfant !== null && d.coutPersonnelParEnfant !== undefined) {
-      monthlyTotals[schoolYearIndex].sommeCoutPersonnelParEnfant += d.coutPersonnelParEnfant;
-      monthlyTotals[schoolYearIndex].nbJoursCoutPersonnel += 1;
-    }
-
     if (isCantine) {
       monthlyTotals[schoolYearIndex].heuresAgentCantine += d.agentHeuresTravail || 0;
       monthlyTotals[schoolYearIndex].fraisPersonnelCantine += d.agentFraisPerso || 0;
@@ -151,20 +127,9 @@ export const aggregateByMonth = (data: DailyData[], selectedMonth: string): Mont
   });
 
   // Générer les données pour tous les mois
-  return monthNames.map((name, index) => {
-    const totals = monthlyTotals[index];
-    return {
-      month: name,
-      monthIndex: index,
-      ...totals,
-      coutMatiereParEnfant:
-        totals.nbJoursCoutMatiere > 0
-          ? totals.sommeCoutMatiereParEnfant / totals.nbJoursCoutMatiere
-          : 0,
-      coutPersonnelParEnfant:
-        totals.nbJoursCoutPersonnel > 0
-          ? totals.sommeCoutPersonnelParEnfant / totals.nbJoursCoutPersonnel
-          : 0,
-    };
-  });
+  return monthNames.map((name, index) => ({
+    month: name,
+    monthIndex: index,
+    ...monthlyTotals[index],
+  }));
 };

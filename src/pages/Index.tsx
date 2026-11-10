@@ -4,7 +4,6 @@ import Header from "@/components/Header";
 import StatCard from "@/components/StatCard";
 import CostChart from "@/components/CostChart";
 import CostBreakdownChart from "@/components/CostBreakdownChart";
-import CostPerChildChart from "@/components/CostPerChildChart";
 import AttendanceChart from "@/components/AttendanceChart";
 import WasteChart from "@/components/WasteChart";
 import MealsChart from "@/components/MealsChart";
@@ -110,11 +109,6 @@ const Index = () => {
           <div>
             <CostBreakdownChart data={data} />
           </div>
-        </div>
-
-        {/* Charts Row 1b - Coût de revient moyen par enfant */}
-        <div className="grid grid-cols-1 gap-6 mb-6">
-          <CostPerChildChart monthlyData={monthlyData} />
         </div>
 
         {/* Charts Row 2 - Fréquentation et Déchets */}
